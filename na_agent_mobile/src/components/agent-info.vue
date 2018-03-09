@@ -1,0 +1,85 @@
+<template>
+  <div class="agent_info">
+    <div class="agent_info_operate">
+      <ul>
+        <li
+          v-for="(operate, index) in operates"
+          :key="index"
+        >
+          <div class="operate_icon"><img :src="operate.img" alt=""></div>
+          <span>{{ operate.name }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="agent_account">
+      <ul>
+        <li>
+          <label>剩余点数</label>
+          <span>111,111,111.00</span>
+        </li>
+        <li>
+          <label>总转码</label>
+          <span>111,111,111.00</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'agent-info',
+  data () {
+    return {
+      operates: [
+        { name: '创建代理', img: require('assets/img/add-agent.png') },
+        { name: '创建玩家', img: require('assets/img/add-player.png') },
+        { name: '存点', img: require('assets/img/save.png') },
+        { name: '提点', img: require('assets/img/get.png') }
+      ]
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+
+// 代理信息
+.agent_info
+  width 750px
+
+.agent_info_operate
+  height 120px
+  color #5796CC
+  font-size 24px
+  ul
+    display flex
+    height 100%
+    li
+      display flex
+      flex-direction column
+      align-items center
+      justify-content center
+      width 25%
+      height 100%
+      .operate_icon
+        width 55px
+        height 55px
+        img
+          width 100%
+          height 100%
+
+// 代理账户
+.agent_account
+  font-size 30px
+  color #787878
+  padding 0 25px
+  ul
+    li
+      display flex
+      justify-content space-between
+      height 70px
+      span
+        margin-right 40px
+</style>

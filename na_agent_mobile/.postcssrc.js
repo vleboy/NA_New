@@ -14,7 +14,7 @@ module.exports = {
       viewportHeight: 1334, 
       unitPrecision: 3,  
       viewportUnit: 'vw', 
-      selectorBlackList: ['.ignore', '.hairlines'],
+      selectorBlackList: ['.ignore', '.hairlines', '.picker', '.picker-toolbar', 'mint-datetime-action'],
       minPixelValue: 1, 
       mediaQuery: false
     },

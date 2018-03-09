@@ -1,17 +1,19 @@
 <template>
   <div class="home">
     <agent-header />
-    123123
+    <agent-item />
   </div>
 </template>
 
 <script>
 import agentHeader from '@/components/agent-header'
+import agentItem from '@/components/agent-item'
 
 export default {
   name: 'home',
   components: {
-    agentHeader
+    agentHeader,
+    agentItem
   }
 }
 </script>
