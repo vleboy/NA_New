@@ -1,7 +1,7 @@
 <template>
   <div class="agent-report-items">
-    <agentTitle :title="reportItemsTitle" />
-    <agent-report-item :lag="reportItemsLag"/>
+    <agent-title :title="reportItemsTitle" v-on:message="cnm" />
+    <agent-report-item :lag="reportItemsLag" v-show="lag"/>
   </div>
 </template>
 
@@ -15,6 +15,17 @@ export default {
   components: {
     agentTitle,
     agentReportItem
+  },
+  data () {
+    return {
+      lag: false
+    }
+  },
+  methods: {
+    cnm (data) {
+      console.log(data)
+      this.lag = !this.lag
+    }
   }
 }
 </script>

@@ -1,10 +1,10 @@
 <template>
   <div class="contanier">
-    <div class="agent_total_report_title" @click="test()">
+    <div class="agent_total_report_title" @click="test(title)">
       <div></div>
       <h2>{{ title }}</h2>
       <div class="agent-lag">
-        <img src="../assets/img/title-lag.png" alt="">
+        <img src="../assets/img/title-lag.png" alt="" :class="{ active_title: showLag }">
       </div>
     </div>
   </div>
@@ -14,10 +14,15 @@
 export default {
   name: 'agent-title-item',
   props: ['title'],
+  data () {
+    return {
+      showLag: false
+    }
+  },
   methods: {
-    test () {
-      console.log('start')
-      this.$emit('testWord', 'i am your father')
+    test (title) {
+      this.$emit('message', title)
+      this.showLag = !this.showLag
     }
   }
 }
@@ -43,5 +48,11 @@ export default {
     img
       width 100%
       height 100%
+      transform rotate(-90deg)
+      transition transform .2s
       vertical-align middle
+
+.active_title
+  transform rotate(0deg)!important
+  transition transform .2s!important
 </style>

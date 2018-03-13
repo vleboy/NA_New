@@ -18,13 +18,13 @@
           <div class="game_list_items" @click="showGameListInfo(index)">
             <label>{{ game.name }}</label>
             <span>{{ game.num }}
-              <i :class="{ showTotalReportActive2: showGameListInfoView && index ===showGameListInfoIndex}" style="transform:rotate(-90deg)">
+              <i :class="{ showTotalReportActive2: showGameListInfoView && index === showGameListInfoIndex}" style="transform:rotate(-90deg)">
                 <img src="../assets/img/sub-lag.png" alt="">
               </i>
             </span>
           </div>
 
-          <div class="game_list_info" v-show="showGameListInfoView && index ===showGameListInfoIndex">
+          <div class="game_list_info" v-show="showGameListInfoView && index === showGameListInfoIndex">
             <ul>
               <li
                 v-for="(info, index) in gameListInfos"
