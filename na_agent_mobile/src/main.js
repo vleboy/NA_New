@@ -6,7 +6,11 @@ import router from './router'
 import Fastclick from 'fastclick'
 import { DatetimePicker } from 'mint-ui'
 import filters from './assets/common/filters'
+import fetch from './api/fetch'
 import 'normalize.css'
+
+// 封装ajax请求
+Vue.use(fetch)
 
 // 添加过滤器
 Object.keys(filters).forEach((k) => Vue.filter(k, filters[k]))

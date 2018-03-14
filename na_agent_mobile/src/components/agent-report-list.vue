@@ -79,6 +79,7 @@ export default {
     showGameListInfo (index) {
       this.showGameListInfoIndex = index
       this.showGameListInfoView = !this.showGameListInfoView
+      alert('123123')
     }
   }
 }
