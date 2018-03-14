@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
 import agentHeader from '@/components/agent-header'
 import agentItem from '@/components/agent-item'
 import api from '@/api/api'

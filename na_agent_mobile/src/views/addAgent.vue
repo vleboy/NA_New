@@ -8,74 +8,74 @@
       <div class="-c-item">
         <label class="-item-text">所属代理</label>
         <div class="-item-agent">
-          NA876
+          {{agentName || '暂无'}}
           <span class="-item-edit">编辑</span>
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">代理标识</label>
         <div class="-item-agent">
-          ABGCS
+          {{agentSuffix || '暂无'}}
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">用户名:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于6位字符">
+          <input type="text" placeholder="以字母开头不小于6位字符" v-model="agentInfo.userName">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">密码:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于6位字符">
+          <input type="text" placeholder="以字母开头不小于6位字符" v-model="agentInfo.passWord">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">昵称:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于6位字符">
+          <input type="text" placeholder="以字母开头不小于6位字符" v-model="agentInfo.nickname">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">代理成数:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8">
+          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.agentNumber">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">首次添加点数:</label>
         <div class="-item-color">
-          <input type="text" placeholder="可分配点数为：1010">
+          <input type="text" placeholder="可分配点数为：1010" v-model="agentInfo.agentPoint">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">视讯洗码比:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8">
+          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.videoRatio">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">电游洗码比:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8">
+          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.electronicsRatio">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">街机洗码比:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8">
+          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.arcadeRatio">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">棋牌洗码比:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8">
+          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.chessRatio">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">体育洗码比:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8">
+          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.sportsRatio">
         </div>
       </div>
     </div>
@@ -90,11 +90,51 @@ export default {
   name: 'addAgent',
   data () {
     return {
-      isChecked: false
+      isChecked: false,
+      agentSuffix: this.$route.query.agentSuffix,
+      agentName: this.$route.query.agentName,
+      agentInfo: {
+        userName: '', // 用户名
+        passWord: '', // 密码
+        nickname: '', // 昵称
+        agentNumber: '', // 成数
+        agentPoint: '', // 点数
+        videoRatio: '', // 视讯洗码比
+        electronicsRatio: '', // 电子洗码比
+        arcadeRatio: '', // 街机洗码比
+        chessRatio: '', // 棋牌洗码比
+        sportsRatio: '' // 体育洗码比
+      },
+      formValidationName: {
+        'userName': '用户名',
+        'passWord': '密码',
+        'nickname': '昵称',
+        'agentNumber': '代理成数',
+        'agentPoint': '首次添加点数',
+        'videoRatio': '视讯洗码比',
+        'electronicsRatio': '电子洗码比',
+        'arcadeRatio': '街机洗码比',
+        'chessRatio': '棋牌洗码比',
+        'sportsRatio': '体育洗码比'
+      }
     }
   },
   methods: {
-    addPlayer () {},
+    addPlayer () {
+//      this.$indicator.open({
+//        text: '加载中...',
+//        spinnerType: 'fading-circle'
+//      })
+      for (let item in this.agentInfo) {
+        if (this.agentInfo[item] === '') {
+          return this.$toast({
+            position: 'top',
+            message: `请输入${this.formValidationName[item]}`,
+            className: '-item-message'
+          });
+        }
+      }
+    },
     goBack () {
       window.history.back()
     }

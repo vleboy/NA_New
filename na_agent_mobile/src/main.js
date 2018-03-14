@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Fastclick from 'fastclick'
-import { DatetimePicker } from 'mint-ui'
+import { DatetimePicker, Toast, Indicator } from 'mint-ui'
 import filters from './assets/common/filters'
 import fetch from './api/fetch'
 import 'normalize.css'
@@ -23,6 +23,8 @@ Fastclick.attach(document.body)
 
 Vue.config.productionTip = false
 
+Vue.prototype.$toast = Toast
+Vue.prototype.$indicator = Indicator
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -2,20 +2,20 @@
   <div class="p-player">
     <div class="-p-nav">
       <span class="-n-arrow"> <img @click="goBack" src="/static/arrow_left.png"></span>
-      <span class="-n-name">存点</span>
+      <span class="-n-name">{{isSave ? '存点' : '提点'}}</span>
     </div>
     <div class="-p-content" v-if="!isSuccess">
       <div class="-c-item">
         <div class="-item-text">发起方:</div>
         <div class="-item-name">James
-          <div class="-item-tip -tips-color-agent">代理</div>
+          <div class="-item-tip" :class="{'-tips-color-player': !isSave,'-tips-color-agent':isSave}">{{isSave ? '代理' : '玩家'}}</div>
         </div>
-        <div class="-item-point">1111111111dsada1</div>
+        <div class="-item-point">1111111111211</div>
       </div>
       <div class="-c-item">
         <div class="-item-text">接收方:</div>
         <div class="-item-name">James2
-          <div class="-item-tip -tips-color-player">玩家</div>
+          <div class="-item-tip " :class="{'-tips-color-player': isSave,'-tips-color-agent':!isSave}">{{isSave ? '玩家' : '代理'}}</div>
         </div>
         <div class="-item-point">11111111111</div>
       </div>
@@ -27,12 +27,12 @@
       </div>
     </div>
     <div v-else class="-p-content">
-      <div class="-c-success-text">存点成功</div>
+      <div class="-c-success-text">{{isSave ? '存点成功' : '提点成功'}}</div>
       <div class="-c-success-content">
         <div class="-c-item">
           <div class="-item-text">发起方:</div>
           <div class="-item-name">James
-            <div class="-item-tip -tips-color-agent">代理</div>
+            <div class="-item-tip" :class="{'-tips-color-player': !isSave,'-tips-color-agent':isSave}">{{isSave ? '代理' : '玩家'}}</div>
           </div>
           <div class="-item-point">11111111113431</div>
         </div>
@@ -42,8 +42,8 @@
       <div class="-c-success-content">
         <div class="-c-item">
           <div class="-item-text">接收方:</div>
-          <div class="-item-name">James
-            <div class="-item-tip -tips-color-player">玩家</div>
+          <div class="-item-name">James3
+            <div class="-item-tip" :class="{'-tips-color-player': isSave,'-tips-color-agent':!isSave}">{{isSave ? '玩家' : '代理'}}</div>
           </div>
           <div class="-item-point">11111111113431</div>
         </div>
@@ -67,12 +67,17 @@ export default {
       isSuccess: false
     }
   },
+  computed: {
+    isSave () {
+      return this.$route.query.state === 1
+    }
+  },
   methods: {
     saveSubmit () {
       this.isSuccess = !this.isSuccess
     },
     goBack () {
-      alert('回退')
+      window.history.back()
     }
   }
 }
