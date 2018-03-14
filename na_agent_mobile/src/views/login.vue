@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     login () {
-      this.$router.push('/saveRemind')
+      this.$router.push('/home')
     }
   }
 }

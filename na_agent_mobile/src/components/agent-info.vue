@@ -5,6 +5,7 @@
         <li
           v-for="(operate, index) in operates"
           :key="index"
+          @click="jumpUrl(operate.url)"
         >
           <div class="operate_icon"><img :src="operate.img" alt=""></div>
           <span>{{ operate.name }}</span>
@@ -33,11 +34,16 @@ export default {
   data () {
     return {
       operates: [
-        { name: '创建代理', img: require('assets/img/add-agent.png') },
-        { name: '创建玩家', img: require('assets/img/add-player.png') },
-        { name: '存点', img: require('assets/img/save.png') },
-        { name: '提点', img: require('assets/img/get.png') }
+        {name: '创建代理', img: require('assets/img/add-agent.png'), url: '/addAgent'},
+        {name: '创建玩家', img: require('assets/img/add-player.png'), url: '/addPlayer' },
+        {name: '存点', img: require('assets/img/save.png'), url: '/saveRemind' },
+        {name: '提点', img: require('assets/img/get.png'), url: '/saveRemind' }
       ]
+    }
+  },
+  methods: {
+    jumpUrl (url) {
+      this.$router.push(url)
     }
   }
 }

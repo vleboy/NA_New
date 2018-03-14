@@ -96,7 +96,7 @@ export default {
   methods: {
     addPlayer () {},
     goBack () {
-      alert('回退')
+      window.history.back()
     }
   }
 }
