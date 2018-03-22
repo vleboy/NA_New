@@ -15,7 +15,7 @@
       <div class="-c-item">
         <label class="-item-text">代理标识</label>
         <div class="-item-agent">
-          {{agentSuffix || '暂无'}}
+          {{agentSn || '暂无'}}
         </div>
       </div>
       <div class="-c-item">
@@ -39,7 +39,7 @@
       <div class="-c-item">
         <label class="-item-text">代理成数:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.rate">
+          <input type="text" :placeholder="rateTip" v-model="agentInfo.rate">
         </div>
       </div>
       <div class="-c-item">
@@ -48,34 +48,10 @@
           <input type="text" :placeholder="pointsTip" v-model="agentInfo.points">
         </div>
       </div>
-      <div class="-c-item">
-        <label class="-item-text">视讯洗码比:</label>
+      <div class="-c-item" v-for="item in parentGameList">
+        <label class="-item-text">{{item.name}}:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.videoRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">电游洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.electronicsRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">街机洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.arcadeRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">棋牌洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.chessRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">体育洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="agentInfo.sportsRatio">
+          <input type="text" :placeholder="item.mixTip" v-model="item.percentage">
         </div>
       </div>
       <div class="-c-checked">
@@ -104,42 +80,61 @@ export default {
   data () {
     return {
       isChecked: false,
-      agentSuffix: this.$route.query.agentSuffix,
+      agentSn: this.$route.query.agentSn,
       agentName: this.$route.query.agentName,
       agentInfo: {
         username: '', // 用户名
         password: '', // 密码
         displayName: '', // 昵称
         rate: '', // 成数
-        points: '', // 点数
-        videoRatio: '0', // 视讯洗码比
-        electronicsRatio: '0', // 电子洗码比
-        arcadeRatio: '0', // 街机洗码比
-        chessRatio: '0', // 棋牌洗码比
-        sportsRatio: '0' // 体育洗码比
+        points: '' // 点数
       },
       formValidationName: {
         'username': '用户名',
         'password': '密码',
         'displayName': '昵称',
         'rate': '代理成数',
-        'points': '首次添加点数',
-        'videoRatio': '视讯洗码比',
-        'electronicsRatio': '电子洗码比',
-        'arcadeRatio': '街机洗码比',
-        'chessRatio': '棋牌洗码比',
-        'sportsRatio': '体育洗码比'
+        'points': '首次添加点数'
       },
-      parentId:'d5cd8c7c-50e8-45af-97a5-141efc49a13a',
-      pointsTip: '',
-      limitList: [],
-      chipList: [],
-      oldChipList: [],
+      pointsTip: '', // 点数提示
+      rateTip: '', // 成数提示
+      limitList: [], // 限红列表
+      chipList: [], // 存储限红列表
+      oldChipList: [], // 存储限红列表
       billInfo: [], // 代理可分配点数以及相关信息
-      userId: localStorage.getItem('loginId')
+      gameReportForm: [
+        {
+          code: '10000',
+          name: 'NA棋牌游戏',
+          mix: '1'
+        },
+        {
+          code: '30000',
+          name: 'NA真人游戏',
+          mix: '1'
+        },
+        {
+          code: '40000',
+          name: 'NA电子游戏',
+          mix: '1'
+        },
+        {
+          code: '50000',
+          name: 'NA街机游戏',
+          mix: '1'
+        }
+      ]
+    }
+  },
+  computed: {
+    parentGameList () {
+      return JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
     }
   },
   mounted () {
+    for (let item of this.parentGameList) {
+      item.mixTip = `可分配洗码比为0~${item.mix}`
+    }
     this.getChildAgentList()
     this.getBills()
   },
@@ -151,20 +146,16 @@ export default {
       })
       this.$http({
         method: 'get',
-        url: `${api.bills}/${this.userId}`
+        url: `${api.bills}/${localStorage.loginId}`
       }).then(res => {
         this.$indicator.close()
-        if (res.data.code != '0') {
-          this.$toast({
-            position: 'top',
-            message: `${res.data.msg}`,
-            className: '-item-message'
-          })
-        } else {
-          this.billInfo = res.data.payload
-          this.pointsTip = `可分配点数为：${this.billInfo.balance}`
-        }
+        this.billInfo = res.data.payload
+        this.pointsTip = `可分配点数为：${this.billInfo.balance}`
+        this.rateTip = `可分配成数为：${this.billInfo.rate}`
+      }).catch(err=>{
+        this.$indicator.close()
       })
+
     },
     getChildAgentList () {
       this.$indicator.open({
@@ -175,7 +166,7 @@ export default {
         method: 'post',
         url: api.chipList,
         data: {
-          parentId:this.parentId
+          parentId: localStorage.loginSuffix == 'Agent' ? '' : localStorage.loginId
         }
       }).then(res => {
         this.$indicator.close()
@@ -188,6 +179,8 @@ export default {
             value: item
           })
         }
+      }).catch(err=>{
+        this.$indicator.close()
       })
     },
     addAgentFun () {
@@ -195,32 +188,32 @@ export default {
 
       this.chipList = []
 
+      this.oldChipList = []
+
+      param.gameList = []
+
       param.role = '1000'
 
-      param.parent = this.parentId
+      param.parent = localStorage.loginId
 
-      param.gameList = [
-        {
-          name: '视讯',
-          mix: this.agentInfo.videoRatio
-        },
-        {
-          name: '电子',
-          mix: this.agentInfo.electronicsRatio
-        },
-        {
-          name: '街机',
-          mix: this.agentInfo.arcadeRatio
-        },
-        {
-          name: '棋牌',
-          mix: this.agentInfo.chessRatio
-        },
-        {
-          name: '体育',
-          mix: this.agentInfo.sportsRatio
+      // 处理所代理的游戏洗码比
+      for (let item of this.parentGameList) {
+        if(item.percentage) {
+          if(item.percentage > item.mix || item.percentage < 0) {
+           return this.$toast({
+              position: 'top',
+              message: `请输入正确的${item.name}洗码比范围`,
+              className: '-item-message'
+            });
+          } else {
+            param.gameList.push({
+              code: item.code,
+              name: item.name,
+              mix: item.percentage
+            })
+          }
         }
-      ]
+      }
 
       // 处理限红
       for (let item of this.limitList) {
@@ -230,7 +223,8 @@ export default {
         this.oldChipList.push(item.value)
       }
 
-      param.chip = this.chipList.length ? this.chipList : this.oldChipList // 限红没选择默认就是上一级全部
+      // 限红没选择默认就是上一级全部
+      param.chip = this.chipList.length ? this.chipList : this.oldChipList
 
       // 检测表单是否符合标准
       for (let item in this.agentInfo) {
@@ -247,20 +241,32 @@ export default {
             className: '-item-message'
           });
         } else if (item=='points' && !pattern.positiveInteger.exec(this.agentInfo[item])) {
-          console.log(1)
-          return this.$toast({
-            position: 'top',
-            message: `请输入符合规则的${this.formValidationName[item]}`,
-            className: '-item-message'
-          });
-        } else if((this.agentInfo[item]>0.8 || this.agentInfo[item]<0)&& (item!='points')) {
-          console.log(2)
           return this.$toast({
             position: 'top',
             message: `请输入符合规则的${this.formValidationName[item]}`,
             className: '-item-message'
           });
         }
+      }
+
+      if (param.rate > this.billInfo.rate) {
+        return this.$toast({
+          position: 'top',
+          message: `已超出上级成数`,
+          className: '-item-message'
+        });
+      } else if (param.points > this.billInfo.balance)  {
+        return this.$toast({
+          position: 'top',
+          message: `已超出上级点数余额`,
+          className: '-item-message'
+        });
+      } else if (!param.gameList.length ){
+        return this.$toast({
+          position: 'top',
+          message: `请至少填写一款代理游戏`,
+          className: '-item-message'
+        });
       }
 
       this.$indicator.open({
@@ -274,20 +280,14 @@ export default {
         data: param
       }).then(res => {
         this.$indicator.close()
-        if (res.data.code != '0') {
-          this.$toast({
-            position: 'top',
-            message: `${res.data.msg}`,
-            className: '-item-message'
-          })
-        } else {
-          this.$route.push('/home')
-          this.$toast({
-            position: 'top',
-            message: `创建成功`,
-            className: '-item-message'
-          })
-        }
+        this.$toast({
+          position: 'top',
+          message: `创建成功`,
+          className: '-item-message'
+        })
+        this.$router.push('/home')
+      }).catch(err=>{
+        this.$indicator.close()
       })
     },
     goBack () {

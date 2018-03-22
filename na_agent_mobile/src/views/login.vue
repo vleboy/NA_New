@@ -73,6 +73,7 @@ export default {
             localStorage.setItem('loginRole', loginInfo.role)
             localStorage.setItem('loginUsername', loginInfo.username)
             localStorage.setItem('loginParentName', loginInfo.parentName)
+            localStorage.setItem('loginGameList', JSON.stringify(loginInfo.gameList))
             this.$router.push('/home')
           }
       })

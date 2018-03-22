@@ -1,5 +1,7 @@
 import axios from 'axios'
+import router from '@/router'
 require('es6-promise').polyfill()
+import { Toast } from 'mint-ui';
 
 export const Axios = axios.create({
   timeout: 10000,
@@ -9,8 +11,8 @@ export const Axios = axios.create({
 })
 // POST传参序列化(添加请求拦截器)
 Axios.interceptors.request.use(config => {
-  if (localStorage.token) {
-    config.headers.Authorization = 'JWT ' + localStorage.token
+  if (localStorage.loginToken) {
+    config.headers.Authorization = 'JWT ' + localStorage.loginToken
   }
   return config
 }, error => {
@@ -21,14 +23,18 @@ Axios.interceptors.request.use(config => {
 // 返回状态判断(添加响应拦截器)
 Axios.interceptors.response.use(res => {
   // 对响应数据做些事
-  //if (res.data.code != '0') {
-  //  Toast({
-  //    position: 'top',
-  //    message: `${res.data.msg}`,
-  //    className: '-item-message'
-  //  });
-  //  return Promise.reject(res)
-  //}
+  if (res.data.code != '0') {
+    Toast({
+      position: 'top',
+      message: `${res.data.msg}`,
+      className: '-item-message'
+    });
+    if(res.data.code =='-2') {
+      router.push('/login')
+      localStorage.clear()
+    }
+    return Promise.reject(res)
+  }
   return Promise.resolve(res)
 }, error => {
   // if (error.response.status === 401) {

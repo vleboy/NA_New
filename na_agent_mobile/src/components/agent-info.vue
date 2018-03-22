@@ -34,10 +34,36 @@ export default {
   data () {
     return {
       operates: [
-        {name: '创建代理', img: require('assets/img/add-agent.png'), url: '/addAgent', param: {agentSuffix: "ABCD", agentName: '中国行政区代理'}},
-        {name: '创建玩家', img: require('assets/img/add-player.png'), url: '/addPlayer', param: {agentSuffix: "ABCD", agentName: '中国行政区代理'}},
-        {name: '存点', img: require('assets/img/save.png'), url: '/saveRemind', param:{state: 1}},
-        {name: '提点', img: require('assets/img/get.png'), url: '/saveRemind', param: {state: 2}}
+        {
+          name: '创建代理',
+          img: require('assets/img/add-agent.png'),
+          url: '/addAgent',
+          param: {
+            agentSn: localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn,
+            agentName: localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
+          }
+        },
+        {
+          name: '创建玩家',
+          img: require('assets/img/add-player.png'),
+          url: '/addPlayer',
+          param: {
+            agentSn: localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn,
+            agentName: localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
+          }
+        },
+        {
+          name: '存点',
+          img: require('assets/img/save.png'),
+          url: '/saveRemind',
+          param:{state: 1}
+        },
+        {
+          name: '提点',
+          img: require('assets/img/get.png'),
+          url: '/saveRemind',
+          param: {state: 2}
+        }
       ]
     }
   },

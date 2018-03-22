@@ -30,34 +30,10 @@
           <input type="text" :placeholder="pointsTip" v-model="playerInfo.points">
         </div>
       </div>
-      <div class="-c-item">
-        <label class="-item-text">视讯洗码比:</label>
+      <div class="-c-item" v-for="item in parentGameList">
+        <label class="-item-text">{{item.name}}:</label>
         <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="playerInfo.videoRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">电游洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="playerInfo.electronicsRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">街机洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="playerInfo.arcadeRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">棋牌洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="playerInfo.chessRatio">
-        </div>
-      </div>
-      <div class="-c-item">
-        <label class="-item-text">体育洗码比:</label>
-        <div class="-item-color">
-          <input type="text" placeholder="输入范围0~0.8" v-model="playerInfo.sportsRatio">
+          <input type="text" :placeholder="item.mixTip" v-model="item.percentage">
         </div>
       </div>
       <div class="-c-checked">
@@ -93,29 +69,48 @@ export default {
       playerInfo: {
         userName: '', // 用户名
         userPwd: '', // 密码
-        points: '', // 点数
-        videoRatio: '0', // 视讯洗码比
-        electronicsRatio: '0', // 电子洗码比
-        arcadeRatio: '0', // 街机洗码比
-        chessRatio: '0', // 棋牌洗码比
-        sportsRatio: '0' // 体育洗码比
+        points: '' // 点数
       },
       formValidationName: {
         'userName': '用户名',
         'userPwd': '密码',
-        'points': '首次添加点数',
-        'videoRatio': '视讯洗码比',
-        'electronicsRatio': '电子洗码比',
-        'arcadeRatio': '街机洗码比',
-        'chessRatio': '棋牌洗码比',
-        'sportsRatio': '体育洗码比'
+        'points': '首次添加点数'
       },
-      parentId:'297d5810-c992-44c8-9048-6fb82504cfb1',
       pointsTip: '',
-      billInfo: ''
+      billInfo: '',
+      gameReportForm: [
+        {
+          code: '10000',
+          name: 'NA棋牌游戏',
+          mix: '1'
+        },
+        {
+          code: '30000',
+          name: 'NA真人游戏',
+          mix: '1'
+        },
+        {
+          code: '40000',
+          name: 'NA电子游戏',
+          mix: '1'
+        },
+        {
+          code: '50000',
+          name: 'NA街机游戏',
+          mix: '1'
+        }
+      ]
+    }
+  },
+  computed: {
+    parentGameList () {
+      return JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
     }
   },
   mounted () {
+    for (let item of this.parentGameList) {
+      item.mixTip = `可分配洗码比为0~${item.mix}`
+    }
     this.getChildAgentList()
     this.getBills()
   },
@@ -127,7 +122,7 @@ export default {
       })
       this.$http({
         method: 'get',
-        url: `${api.bills}/${this.parentId}`
+        url: `${api.bills}/${localStorage.loginId}`
       }).then(res => {
         this.$indicator.close()
         if (res.data.code != '0') {
@@ -140,6 +135,8 @@ export default {
           this.billInfo = res.data.payload
           this.pointsTip = `可分配点数为：${this.billInfo.balance}`
         }
+      }).catch(err => {
+        this.$indicator.close()
       })
     }, // 获取可分配点数
     getChildAgentList () {
@@ -151,7 +148,7 @@ export default {
         method: 'post',
         url: api.chipList,
         data: {
-          parentId: ''
+          parentId: localStorage.loginSuffix == 'Agent' ? '' : localStorage.loginId
         }
       }).then(res => {
         this.$indicator.close()
@@ -173,39 +170,43 @@ export default {
 
       this.chipList = []
 
-      param.parentId = this.parentId
+      this.oldChipList = []
 
-      param.gameList = [
-        {
-          name: '视讯',
-          mix: this.playerInfo.videoRatio
-        },
-        {
-          name: '电子',
-          mix: this.playerInfo.electronicsRatio
-        },
-        {
-          name: '街机',
-          mix: this.playerInfo.arcadeRatio
-        },
-        {
-          name: '棋牌',
-          mix: this.playerInfo.chessRatio
-        },
-        {
-          name: '体育',
-          mix: this.playerInfo.sportsRatio
+      param.gameList = []
+
+      param.parentId = localStorage.loginId
+
+      // 处理所代理的游戏洗码比
+      for (let item of this.parentGameList) {
+        if(item.percentage) {
+          if(item.percentage > item.mix || item.percentage < 0) {
+            return this.$toast({
+              position: 'top',
+              message: `请输入正确的${item.name}洗码比范围`,
+              className: '-item-message'
+            });
+          } else {
+            param.gameList.push({
+              code: item.code,
+              name: item.name,
+              mix: item.percentage
+            })
+          }
         }
-      ]
+      }
 
+      // 处理限红
       for (let item of this.limitList) {
         if(item.isChecked){
           this.chipList.push(item.value)
         }
         this.oldChipList.push(item.value)
       }
-      param.chip = this.chipList.length ? this.chipList : this.oldChipList // 限红没选择默认就是上一级全部
 
+      // 限红没选择默认就是上一级全部
+      param.chip = this.chipList.length ? this.chipList : this.oldChipList
+
+      // 检测表单是否符合标准
       for (let item in this.playerInfo) {
         if (this.playerInfo[item] === '' && (item=='userName'||item=='userPwd'||item=='points')) {
           return this.$toast({
@@ -234,6 +235,20 @@ export default {
         }
       }
 
+      if (param.points > this.billInfo.balance)  {
+        return this.$toast({
+          position: 'top',
+          message: `已超出上级点数余额`,
+          className: '-item-message'
+        });
+      } else if (!param.gameList.length ){
+        return this.$toast({
+          position: 'top',
+          message: `请至少填写一款代理游戏`,
+          className: '-item-message'
+        });
+      }
+
       this.$indicator.open({
         text: '加载中...',
         spinnerType: 'fading-circle'
@@ -245,19 +260,14 @@ export default {
         data: param
       }).then(res => {
         this.$indicator.close()
-        if (res.data.code != '0') {
-          this.$toast({
-            position: 'top',
-            message: `${res.data.msg}`,
-            className: '-item-message'
-          })
-        } else {
-          this.$toast({
-            position: 'top',
-            message: `创建成功`,
-            className: '-item-message'
-          })
-        }
+        this.$toast({
+          position: 'top',
+          message: `创建成功`,
+          className: '-item-message'
+        })
+        this.$router.push('/home')
+      }).catch(err=>{
+        this.$indicator.close()
       })
     },
     goBack () {
