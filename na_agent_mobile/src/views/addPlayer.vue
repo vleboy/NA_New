@@ -14,20 +14,20 @@
       <div class="-c-item">
         <label class="-item-text">密码:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于6位字符" v-model="playerInfo.password">
+          <input type="text" placeholder="以字母开头不小于6位字符" v-model="playerInfo.userPwd">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">所属代理</label>
         <div class="-item-agent">
           {{agentName}}
-          <span class="-item-edit">编辑</span>
+          <!--<span class="-item-edit">编辑</span>-->
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">首次添加点数:</label>
         <div class="-item-color">
-          <input type="text" placeholder="可分配点数为：1010" v-model="playerInfo.playerPoint">
+          <input type="text" :placeholder="pointsTip" v-model="playerInfo.points">
         </div>
       </div>
       <div class="-c-item">
@@ -64,86 +64,201 @@
         <div class="-c-checked-text">玩家限红</div>
         <div class="-c-checked-wrap">
           <div class="-c-checked-item" @click="checkLimit(item)" :class="{'active':item.isChecked}" v-for="(item,index) in limitList" :key="index">
-            <div>{{item.value1}}</div>
-            <div>{{item.value2}}</div>
+            <div>{{item.text}}</div>
+            <div>{{item.chip}}</div>
             <div class="-c-checked-img" v-if="item.isChecked"><img src="/static/checked.png"></div>
           </div>
+          <div v-if="!limitList.length" style="text-align: center">暂无限红数据</div>
         </div>
       </div>
     </div>
     <div class="-p-footer">
-      <a class="-button" @click="addPlayer">提交</a>
+      <a class="-button" @click="addPlayerFun">提交</a>
     </div>
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
+  import api from '@/api/api'
+  import { pattern } from '@/unit/regexp'
 export default {
   name: 'addPlayer',
   data () {
     return {
       isChecked: false,
-      limitList: [
-        {
-          value1: '百家乐：最小下注0.1，最大下注121212121',
-          value2: '轮盘：最小下注0.1，最大下注121212121',
-          isChecked: false
-        },
-        {
-          value1: '百家乐：最小下注0.1，最大下注121212121',
-          value2: '轮盘：最小下注0.1，最大下注121212121',
-          isChecked: false
-        },
-        {
-          value1: '百家乐：最小下注0.1，最大下注121212121',
-          value2: '轮盘：最小下注0.1，最大下注121212121',
-          isChecked: false
-        },
-        {
-          value1: '百家乐：最小下注0.1，最大下注121212121',
-          value2: '轮盘：最小下注0.1，最大下注121212121',
-          isChecked: false
-        },
-        {
-          value1: '百家乐：最小下注0.1，最大下注121212121',
-          value2: '轮盘：最小下注0.1，最大下注121212121',
-          isChecked: false
-        }
-      ],
+      limitList: [],
+      chipList: [],
+      oldChipList: [],
       agentName: this.$route.query.agentName,
       playerInfo: {
         userName: '', // 用户名
-        password: '', // 密码
-        playerPoint: '', // 点数
-        videoRatio: '', // 视讯洗码比
-        electronicsRatio: '', // 电子洗码比
-        arcadeRatio: '', // 街机洗码比
-        chessRatio: '', // 棋牌洗码比
-        sportsRatio: '' // 体育洗码比
+        userPwd: '', // 密码
+        points: '', // 点数
+        videoRatio: '0', // 视讯洗码比
+        electronicsRatio: '0', // 电子洗码比
+        arcadeRatio: '0', // 街机洗码比
+        chessRatio: '0', // 棋牌洗码比
+        sportsRatio: '0' // 体育洗码比
       },
       formValidationName: {
         'userName': '用户名',
-        'password': '密码',
-        'playerPoint': '首次添加点数',
+        'userPwd': '密码',
+        'points': '首次添加点数',
         'videoRatio': '视讯洗码比',
         'electronicsRatio': '电子洗码比',
         'arcadeRatio': '街机洗码比',
         'chessRatio': '棋牌洗码比',
         'sportsRatio': '体育洗码比'
-      }
+      },
+      parentId:'297d5810-c992-44c8-9048-6fb82504cfb1',
+      pointsTip: '',
+      billInfo: ''
     }
   },
+  mounted () {
+    this.getChildAgentList()
+    this.getBills()
+  },
   methods: {
-    addPlayer () {
+    getBills () {
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+      this.$http({
+        method: 'get',
+        url: `${api.bills}/${this.parentId}`
+      }).then(res => {
+        this.$indicator.close()
+        if (res.data.code != '0') {
+          this.$toast({
+            position: 'top',
+            message: `${res.data.msg}`,
+            className: '-item-message'
+          })
+        } else {
+          this.billInfo = res.data.payload
+          this.pointsTip = `可分配点数为：${this.billInfo.balance}`
+        }
+      })
+    }, // 获取可分配点数
+    getChildAgentList () {
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+      this.$http({
+        method: 'post',
+        url: api.chipList,
+        data: {
+          parentId: ''
+        }
+      }).then(res => {
+        this.$indicator.close()
+        for (let item of res.data.list) {
+          this.limitList.push({
+            id: item.id,
+            isChecked: false,
+            text:`${item.gameId == 1 ? '百家乐' : '轮盘'}，最大：${item.max}，最小：${item.min}`,
+            chip: `筹码：${item.jtton}`,
+            value: item
+          })
+        }
+      }).catch(err=>{
+        this.$indicator.close()
+      })
+    },
+    addPlayerFun () {
+      let param = this.playerInfo
+
+      this.chipList = []
+
+      param.parentId = this.parentId
+
+      param.gameList = [
+        {
+          name: '视讯',
+          mix: this.playerInfo.videoRatio
+        },
+        {
+          name: '电子',
+          mix: this.playerInfo.electronicsRatio
+        },
+        {
+          name: '街机',
+          mix: this.playerInfo.arcadeRatio
+        },
+        {
+          name: '棋牌',
+          mix: this.playerInfo.chessRatio
+        },
+        {
+          name: '体育',
+          mix: this.playerInfo.sportsRatio
+        }
+      ]
+
+      for (let item of this.limitList) {
+        if(item.isChecked){
+          this.chipList.push(item.value)
+        }
+        this.oldChipList.push(item.value)
+      }
+      param.chip = this.chipList.length ? this.chipList : this.oldChipList // 限红没选择默认就是上一级全部
+
       for (let item in this.playerInfo) {
-        if (this.playerInfo[item] === '') {
+        if (this.playerInfo[item] === '' && (item=='userName'||item=='userPwd'||item=='points')) {
           return this.$toast({
             position: 'top',
             message: `请输入${this.formValidationName[item]}`,
             className: '-item-message'
           });
+        } else if (!pattern.firstLetter.exec(this.playerInfo[item]) && (item=='userName'||item=='userPwd')) {
+          return this.$toast({
+            position: 'top',
+            message: `请输入符合规则的${this.formValidationName[item]}`,
+            className: '-item-message'
+          });
+        } else if (!pattern.positive.exec(this.playerInfo[item]) && (item=='points')) {
+          return this.$toast({
+            position: 'top',
+            message: `请输入符合规则的${this.formValidationName[item]}`,
+            className: '-item-message'
+          });
+        } else if((this.playerInfo[item]>0.8 || this.playerInfo[item]<0)&&(item!='points')) {
+          return this.$toast({
+            position: 'top',
+            message: `请输入符合规则的${this.formValidationName[item]}`,
+            className: '-item-message'
+          });
         }
       }
+
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+
+      this.$http({
+        method: 'post',
+        url: api.addPlayer,
+        data: param
+      }).then(res => {
+        this.$indicator.close()
+        if (res.data.code != '0') {
+          this.$toast({
+            position: 'top',
+            message: `${res.data.msg}`,
+            className: '-item-message'
+          })
+        } else {
+          this.$toast({
+            position: 'top',
+            message: `创建成功`,
+            className: '-item-message'
+          })
+        }
+      })
     },
     goBack () {
       window.history.back()
@@ -209,7 +324,7 @@ export default {
           color: #7f7f7f;
 
           input{
-            padding-top: 20px;
+            padding: 20px 0 0 10px;
             width: 14.4em;
             font-size: 30px;
             border: none;
@@ -243,14 +358,14 @@ export default {
             margin-bottom: 10px;
             border: 1px solid #c3c3c3;
             border-radius: 10px;
-            padding: 10px 10px 10px 70px;
+            padding: 10px 10px 10px 100px;
             font-size: 0.8em;
           }
 
           .-c-checked-img{
             position: absolute;
             top: 27px;
-            left: 10px;
+            left: 30px;
             bottom: 0;
             text-align: right;
             display: inline-block;

@@ -2,20 +2,20 @@
   <div class="p-personal">
     <div class="-p-nav">
       <span class="-n-arrow"> <img @click="goBack" src="/static/arrow_left.png"></span>
-      <span class="-n-name">James</span>
+      <span class="-n-name">{{userInfo.username || '暂无'}}</span>
     </div>
     <div class="-p-content">
       <div class="-c-item">
         <span>用户名</span>
-        <span class="-item-color">James</span>
+        <span class="-item-color">{{userInfo.username || '暂无'}}</span>
       </div>
       <div class="-c-item">
         <span>代理标识</span>
-        <span class="-item-color">xxX898</span>
+        <span class="-item-color">{{ (userInfo.sn == 'NULL!' ? 'NA369' : userInfo.sn) || '暂无' }}</span>
       </div>
       <div class="-c-item">
         <span>剩余点数</span>
-        <span class="-item-color">4545</span>
+        <span class="-item-color">{{userInfo.balance || '0'}}</span>
       </div>
     </div>
     <div class="-p-footer">
@@ -24,18 +24,53 @@
   </div>
 </template>
 
-<script>
-export default {
+<script type="text/ecmascript-6">
+  import api from '@/api/api'
+  export default {
   name: 'personal',
   data () {
     return {
-
+      userId: localStorage.getItem('loginId'),
+      userInfo: {}
     }
   },
+  mounted () {
+    this.getBills()
+  },
   methods: {
-    loginOut () {},
+    getBills () {
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+      this.$http({
+        method: 'get',
+        url: `${api.bills}/${this.userId}`
+      }).then(res => {
+        this.$indicator.close()
+        if (res.data.code != '0') {
+          this.$toast({
+            position: 'top',
+            message: `${res.data.msg}`,
+            className: '-item-message'
+          })
+        } else {
+          this.userInfo = res.data.payload
+        }
+      }).catch(err=>{
+
+      })
+    },
+    loginOut () {
+      this.$message.confirm('确定退出登录?').then(action => {
+        this.$router.push('/login')
+        localStorage.clear()
+      }).catch(error => {
+
+      });
+    },
     goBack () {
-      alert('回退')
+      window.history.back()
     }
   }
 }

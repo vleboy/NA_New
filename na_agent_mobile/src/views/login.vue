@@ -7,11 +7,11 @@
       <form class="-l-form">
         <div class="form-item">
           <label class="-label-text">账号</label>
-          <input class="-input" type="text" placeholder="请输入账号">
+          <input class="-input" type="text" placeholder="请输入账号" v-model="userName">
         </div>
         <div class="form-item">
           <label class="-label-text">密码</label>
-          <input class="-input" type="password" placeholder="请输入密码">
+          <input class="-input" type="password" placeholder="请输入密码" v-model="password">
         </div>
         <div class="form-item">
           <a class="-button" @click="login">立即登录</a>
@@ -21,17 +21,61 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
+  import api from '@/api/api'
 export default {
   name: 'login',
   data () {
     return {
-
+      userName: '',
+      password: ''
     }
   },
   methods: {
     login () {
-      this.$router.push('/home')
+      if(!this.userName || !this.password) {
+        return  this.$toast({
+          position: 'top',
+          message: `请输入用户名或者密码`,
+          className: '-item-message'
+        })
+      }
+      this.$indicator.open({
+        text: '登录中...',
+        spinnerType: 'fading-circle'
+      })
+        this.$http({
+          method: 'post',
+          url: api.agentLogin,
+          data: {
+            mobileFlag: true,
+            username: this.userName,
+            password: this.password,
+            role: '1000'
+          }
+        }).then(res => {
+          this.$indicator.close()
+          if(res.data.code!='0') {
+            this.$toast({
+              position: 'top',
+              message: `${res.data.msg}`,
+              className: '-item-message'
+            })
+          } else {
+            let loginInfo = res.data.payload
+            localStorage.setItem('loginToken', loginInfo.token)
+            localStorage.setItem('loginLevel', loginInfo.level)
+            localStorage.setItem('loginSuffix', loginInfo.suffix)
+            localStorage.setItem('loginSn', loginInfo.sn)
+            localStorage.setItem('loginParent', loginInfo.parent)
+            localStorage.setItem('loginDisplayName', loginInfo.displayName)
+            localStorage.setItem('loginId', loginInfo.userId)
+            localStorage.setItem('loginRole', loginInfo.role)
+            localStorage.setItem('loginUsername', loginInfo.username)
+            localStorage.setItem('loginParentName', loginInfo.parentName)
+            this.$router.push('/home')
+          }
+      })
     }
   }
 }

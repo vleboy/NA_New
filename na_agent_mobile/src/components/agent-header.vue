@@ -7,8 +7,8 @@
         </i>
       </div>
 
-      <div class="agent_user">
-        James
+      <div class="agent_user" @click="showUserInfo">
+        {{userName}}
       </div>
 
       <div class="agent_navbar">
@@ -39,12 +39,16 @@ export default {
   name: 'agent-header',
   data () {
     return {
+      userName: localStorage.getItem('loginUsername'),
       showTimepicker: false
     }
   },
   methods: {
     showTimeView () {
       this.showTimepicker = !this.showTimepicker
+    },
+    showUserInfo () {
+      this.$router.push('/personal')
     }
   },
   components: {
