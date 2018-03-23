@@ -17,20 +17,20 @@ export default {
     agentItem
   },
   mounted () {
-    let test = {
-      userId: '1b78317b-3c6e-4244-9487-61ba6fa44e3e'
-    }
-    this.$http({
-      method: 'post',
-      url: api.reportPlayer,
-      data: test
-    })
-      .then(res => {
-        console.log(res)
-      })
-      .catch(error => {
-        console.log(error)
-      })
+//    let test = {
+//      userId: localStorage.loginId
+//    }
+//    this.$http({
+//      method: 'post',
+//      url: api.reportPlayer,
+//      data: test
+//    })
+//      .then(res => {
+//        console.log(res)
+//      })
+//      .catch(error => {
+//        console.log(error)
+//      })
   }
 }
 </script>

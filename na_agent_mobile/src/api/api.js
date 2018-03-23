@@ -7,9 +7,9 @@ export default {
 
   reportPlayer: `${baseUrl.stat}/queryPlayerStat`, // 平台报表用户所属玩家统计
 
-  calcUserStat: `${baseUrl.stat}/calcUserStat`, // 报表用户时间查询
+  calcUserStat: `${baseUrl.stat}/calcUserStat`, // 总报表（下级所有代理）
 
-  calcPlayerStat: `${baseUrl.stat}/calcPlayerStat`, // 报表玩家时间查询
+  calcPlayerStat: `${baseUrl.stat}/calcPlayerStat`, // 总报表（下级玩家数据）
 
   getChildrenList: `${baseUrl.stat}/agent/children/list`, // 创建玩家获取下级代理商
 

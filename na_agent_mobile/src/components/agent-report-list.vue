@@ -2,22 +2,23 @@
   <div class="total_report_list">
     <div class="total_loss_win" @click="showTotalReport()">
       <label>总输赢</label>
-      <span>111,111,111.00
+      <span :class="{'total-report-green':gameDetail.winloseAmount > 0,'total-report-red':gameDetail.winloseAmount < 0}"
+            v-if="gameLists.length">
+        {{gameDetail.winloseAmount || 0}}
         <i :class="{ showTotalReportActive: !showTotalReportView }">
           <img src="../assets/img/sub-lag.png" alt="">
         </i>
       </span>
+      <span v-else>暂无数据</span>
     </div>
 
     <div class="game_list" v-show="showTotalReportView">
       <ul>
-        <li
-          v-for="(game, index) in gameLists"
-          :key="index"
-        >
+        <li v-for="(game, index) in gameLists" :key="index">
           <div class="game_list_items" @click="showGameListInfo(index)">
             <label>{{ game.name }}</label>
-            <span>{{ game.num }}
+            <span :class="{'total-report-green':game.winloseAmount > 0,'total-report-red':game.winloseAmount < 0}">
+              {{ game.winloseAmount || 0}}
               <i :class="{ showTotalReportActive2: showGameListInfoView && index === showGameListInfoIndex}" style="transform:rotate(-90deg)">
                 <img src="../assets/img/sub-lag.png" alt="">
               </i>
@@ -26,12 +27,64 @@
 
           <div class="game_list_info" v-show="showGameListInfoView && index === showGameListInfoIndex">
             <ul>
-              <li
-                v-for="(info, index) in gameListInfos"
-                :key="index"
-              >
-                <label>{{ info.name }}</label>
-                <span>{{ info.num }}
+              <li>
+                <label>交易次数</label>
+                <span>{{ game.betCount }}
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>投注金额</label>
+                <span>{{ game.betAmount }}
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>输赢金额</label>
+                <span>{{ game.winloseAmount }}
+                  <i></i>
+                </span>
+              </li>
+
+              <li>
+                <label>洗码量</label>
+                <span>{{ game.mixAmount }}
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>佣金</label>
+                <span>{{game.commission}}
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>代理总金额</label>
+                <span>{{ game.totalAmount }}
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>代理交公司</label>
+                <span>{{ game.submitAmount }}
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>代理占成</label>
+                <span>100%
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>返水比例</label>
+                <span>{{ game.mix +'%' }}
+                  <i></i>
+                </span>
+              </li>
+              <li>
+                <label>获利比例</label>
+                <span>{{ game.profitRatio+'%' }}
                   <i></i>
                 </span>
               </li>
@@ -43,34 +96,46 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
+import api from '@/api/api'
 export default {
   name: 'agent-report-list',
   data () {
     return {
-      gameLists: [
-        { name: '视讯', num: '111,111,111.00' },
-        { name: '电游', num: '111,111,111.00' },
-        { name: '街机', num: '111,111,111.00' },
-        { name: '体育', num: '111,111,111.00' },
-        { name: '棋牌', num: '111,111,111.00' }
-      ],
-      gameListInfos: [
-        { name: '交易次数', num: '111,111,111.00' },
-        { name: '投注金额', num: '111,111,111.00' },
-        { name: '输赢金额', num: '111,111,111.00' },
-        { name: '返水比例', num: '111,111,111.00' },
-        { name: '洗码量', num: '111,111,111.00' },
-        { name: '佣金', num: '111,111,111.00' },
-        { name: '代理总金额', num: '111,111,111.00' },
-        { name: '代理占成', num: '111,111,111.00' },
-        { name: '代理交公司', num: '111,111,111.00' },
-        { name: '获利比例', num: '111,111,111.00' }
-      ],
+      gameLists: [],
       showTotalReportView: false,
       showGameListInfoView: false,
-      showGameListInfoIndex: ''
+      showGameListInfoIndex: '',
+      gameReportForm: [
+        {
+          code: '10000',
+          name: 'NA棋牌游戏',
+          mix: '1'
+        },
+        {
+          code: '30000',
+          name: 'NA真人游戏',
+          mix: '1'
+        },
+        {
+          code: '40000',
+          name: 'NA电子游戏',
+          mix: '1'
+        },
+        {
+          code: '50000',
+          name: 'NA街机游戏',
+          mix: '1'
+        }
+      ],
+      gameDetail: {
+        balance: '',
+        mixAmount: ''
+      }
     }
+  },
+  mounted () {
+    this.getAllReport()
   },
   methods: {
     showTotalReport () {
@@ -79,8 +144,74 @@ export default {
     showGameListInfo (index) {
       this.showGameListInfoIndex = index
       this.showGameListInfoView = !this.showGameListInfoView
-//      alert('123123')
-    }
+    },
+    getAllReport () {
+      let gameTypeList = []
+
+      let test = {
+        gameType: gameTypeList,
+        role: localStorage.loginSuffix == 'Agent' ? '-1000' : '1000',
+        userIds: [localStorage.loginId],
+        query: {createdAt: [1521431999000, 1521773026733]}
+      }
+
+      // 获取该报表有的游戏
+      if (JSON.parse(localStorage.loginGameList).length) {
+        for (let item of JSON.parse(localStorage.loginGameList)) {
+          gameTypeList.push(item.code)
+        }
+      } else {
+        for (let item of this.gameReportForm) {
+          gameTypeList.push(item.code)
+        }
+      }
+
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+
+      this.$http({
+          method: 'post',
+          url: api.calcUserStat,
+          data: test
+        }).then(res => {
+
+        this.$indicator.close()
+
+        if (res.data.payload.length) {
+          this.gameDetail = res.data.payload[0]
+          this.initData()
+        }
+
+        this.$store.commit({
+          type: 'agentInfo_title',
+          data: this.gameDetail
+        }) // 存储显示剩余点数以及洗码量
+
+      }).catch(error => {
+        this.$indicator.close()
+      })
+    },// 获取总报表相关信息
+    initData () {
+      console.log(0)
+      let loginGameList = JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
+
+      for (let [key,item] of Object.entries(this.gameDetail.gameTypeMap)) {
+        for (let data of loginGameList) {
+          if(key == data.code) {
+            item.code = key // 游戏code
+            item.name = data.name // 名称
+            item.mix = data.mix // 返水比例
+            item.betAmount = Math.abs(item.betAmount) // 格式化投注金额
+            item.commission = (key == '30000') ? item.mixAmount*item.mix : item.betAmount*item.mix  // 佣金 (真人和其他游戏类型算法不一样)
+            item.totalAmount = (item.commission + item.winloseAmount).toFixed(2) // 代理总金额
+            item.profitRatio = (key == '30000') ? (item.totalAmount/item.mixAmount).toFixed(2) : (item.totalAmount/item.betAmount).toFixed(2)  // 获利比例(真人和其他游戏类型算法不一样)
+          }
+        }
+        this.gameLists.push(item)
+      }
+    }// 数据组装，处理数据
   }
 }
 </script>
@@ -122,4 +253,9 @@ export default {
 .showTotalReportActive2
   transform rotate(0deg)!important
   transition transform .2s
+
+.total-report-red
+   color: #FF3300;
+.total-report-green
+   color: #00CC00;
 </style>

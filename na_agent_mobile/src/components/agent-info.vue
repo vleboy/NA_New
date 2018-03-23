@@ -17,11 +17,11 @@
       <ul>
         <li>
           <label>剩余点数</label>
-          <span>111,111,111.00</span>
+          <span>{{agentInfo.balance || 0}}</span>
         </li>
         <li>
-          <label>总转码</label>
-          <span>111,111,111.00</span>
+          <label>总洗码量</label>
+          <span>{{agentInfo.mixAmount || 0}}</span>
         </li>
       </ul>
     </div>
@@ -65,6 +65,11 @@ export default {
           param: {state: 2}
         }
       ]
+    }
+  },
+  computed: {
+    agentInfo () {
+      return this.$store.state.agentInfo
     }
   },
   methods: {

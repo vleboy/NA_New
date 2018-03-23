@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     cnm (data) {
-      console.log(data)
+      console.log(data,1111)
       this.lag = !this.lag
     }
   }

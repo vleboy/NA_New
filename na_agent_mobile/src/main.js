@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Fastclick from 'fastclick'
+import store from './unit/store'
 import { DatetimePicker, Toast, Indicator, MessageBox } from 'mint-ui'
 import filters from './assets/common/filters'
 import fetch from './api/fetch'
@@ -30,6 +31,7 @@ Vue.prototype.$message = MessageBox
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
