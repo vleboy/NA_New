@@ -1,18 +1,6 @@
 <template>
   <div class="agent_info">
-    <div class="agent_info_operate">
-      <ul>
-        <li
-          v-for="(operate, index) in operates"
-          :key="index"
-          @click="jumpUrl(operate)"
-        >
-          <div class="operate_icon"><img :src="operate.img" alt=""></div>
-          <span>{{ operate.name }}</span>
-        </li>
-      </ul>
-    </div>
-
+    <agentOperation :navOperation="operates"></agentOperation>
     <div class="agent_account">
       <ul>
         <li>
@@ -29,8 +17,10 @@
 </template>
 
 <script>
+import agentOperation from './agent-operation'
 export default {
   name: 'agent-info',
+  components:{agentOperation},
   data () {
     return {
       operates: [

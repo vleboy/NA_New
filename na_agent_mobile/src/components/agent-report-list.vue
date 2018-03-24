@@ -66,7 +66,7 @@
               </li>
               <li>
                 <label>代理交公司</label>
-                <span>{{ game.submitAmount }}
+                <span>{{ game.submitAmount||0}}
                   <i></i>
                 </span>
               </li>
@@ -194,7 +194,6 @@ export default {
       })
     },// 获取总报表相关信息
     initData () {
-      console.log(0)
       let loginGameList = JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
 
       for (let [key,item] of Object.entries(this.gameDetail.gameTypeMap)) {
@@ -204,8 +203,8 @@ export default {
             item.name = data.name // 名称
             item.mix = data.mix // 返水比例
             item.betAmount = Math.abs(item.betAmount) // 格式化投注金额
-            item.commission = (key == '30000') ? item.mixAmount*item.mix : item.betAmount*item.mix  // 佣金 (真人和其他游戏类型算法不一样)
-            item.totalAmount = (item.commission + item.winloseAmount).toFixed(2) // 代理总金额
+            item.commission = (key == '30000') ? (item.mixAmount*item.mix).toFixed(2) : (item.betAmount*item.mix).toFixed(2)  // 佣金 (真人和其他游戏类型算法不一样)
+            item.totalAmount = (+item.commission + item.winloseAmount).toFixed(2) // 代理总金额
             item.profitRatio = (key == '30000') ? (item.totalAmount/item.mixAmount).toFixed(2) : (item.totalAmount/item.betAmount).toFixed(2)  // 获利比例(真人和其他游戏类型算法不一样)
           }
         }

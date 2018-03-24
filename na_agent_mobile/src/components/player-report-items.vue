@@ -1,20 +1,20 @@
 <template>
   <div class="agent-report-items">
     <agent-title :title="reportItemsTitle" v-on:message="cnm" />
-    <agent-report-item v-show="lag"/>
+    <player-report-item v-show="lag"/>
   </div>
 </template>
 
 <script>
 import agentTitle from './agent-title'
-import agentReportItem from './agent-report-item'
+import playerReportItem from './player-report-item'
 
 export default {
-  name: 'agent-report-items',
+  name: 'player-report-items',
   props: ['reportItemsTitle', 'reportItemsLag'],
   components: {
     agentTitle,
-    agentReportItem
+    playerReportItem
   },
   data () {
     return {

@@ -2,15 +2,16 @@
   <div class="agent_report_item">
     <ul>
       <li
-        v-for="(item, index) in 3"
+        v-for="(item, index) in reportItemList"
         :key="index"
       >
         <div class="agent_items">
           <div class="agent_user_lag">
-            <a href="javascript:;">{{ lag }}</a>
-            James1
+            <a href="javascript:;">代理</a>
+            {{item.displayName}}
           </div>
-          <span>111,111,111.00
+          <span>
+            {{item.winlose}}
             <i>
               <img src="../assets/img/sub-lag.png" alt="">
             </i>
@@ -22,13 +23,37 @@
   </div>
 </template>
 
-<script>
-import agentItem from './agent-total-report'
+<script type="text/ecmascript-6">
+import api from '@/api/api'
 export default {
   name: 'agent-report-item',
-  props: ['lag'],
-  components: {
-    agentItem
+  data() {
+    return{
+      reportItemList: []
+    }
+  },
+  mounted () {
+    this.getAgentList()
+  },
+  methods: {
+    getAgentList () {
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+      this.$http({
+        method: 'post',
+        url: api. reportInfo,
+        data: {
+          parent: localStorage.loginSuffix == 'Agent' ? '01' : localStorage.loginId
+        }
+      }).then(res => {
+        this.$indicator.close()
+        this.reportItemList = res.data.payload
+      }).catch(error => {
+        this.$indicator.close()
+      })
+    } // 获取代理列表
   }
 }
 </script>

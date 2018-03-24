@@ -55,28 +55,22 @@ export default {
           }
         }).then(res => {
           this.$indicator.close()
-          if(res.data.code!='0') {
-            this.$toast({
-              position: 'top',
-              message: `${res.data.msg}`,
-              className: '-item-message'
-            })
-          } else {
-            let loginInfo = res.data.payload
-            localStorage.setItem('loginToken', loginInfo.token)
-            localStorage.setItem('loginLevel', loginInfo.level)
-            localStorage.setItem('loginSuffix', loginInfo.suffix)
-            localStorage.setItem('loginSn', loginInfo.sn)
-            localStorage.setItem('loginParent', loginInfo.parent)
-            localStorage.setItem('loginDisplayName', loginInfo.displayName)
-            localStorage.setItem('loginId', loginInfo.userId)
-            localStorage.setItem('loginRole', loginInfo.role)
-            localStorage.setItem('loginUsername', loginInfo.username)
-            localStorage.setItem('loginParentName', loginInfo.parentName)
-            localStorage.setItem('loginGameList', JSON.stringify(loginInfo.gameList))
-            this.$router.push('/home')
-          }
-      })
+          let loginInfo = res.data.payload
+          localStorage.setItem('loginToken', loginInfo.token)
+          localStorage.setItem('loginLevel', loginInfo.level)
+          localStorage.setItem('loginSuffix', loginInfo.suffix)
+          localStorage.setItem('loginSn', loginInfo.sn)
+          localStorage.setItem('loginParent', loginInfo.parent)
+          localStorage.setItem('loginDisplayName', loginInfo.displayName)
+          localStorage.setItem('loginId', loginInfo.userId)
+          localStorage.setItem('loginRole', loginInfo.role)
+          localStorage.setItem('loginUsername', loginInfo.username)
+          localStorage.setItem('loginParentName', loginInfo.parentName)
+          localStorage.setItem('loginGameList', JSON.stringify(loginInfo.gameList))
+          this.$router.push('/home')
+      }).catch(()=>{
+          this.$indicator.close()
+        })
     }
   }
 }
