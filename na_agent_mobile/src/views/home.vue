@@ -17,20 +17,6 @@ export default {
     agentItem
   },
   mounted () {
-//    let test = {
-//      userId: localStorage.loginId
-//    }
-//    this.$http({
-//      method: 'post',
-//      url: api.reportPlayer,
-//      data: test
-//    })
-//      .then(res => {
-//        console.log(res)
-//      })
-//      .catch(error => {
-//        console.log(error)
-//      })
   }
 }
 </script>

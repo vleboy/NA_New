@@ -96,6 +96,7 @@
           </ul>
         </div>
       </li>
+      <li v-if="!reportItemList.length" style="text-align: center">暂无玩家数据</li>
     </ul>
   </div>
 </template>
@@ -249,7 +250,6 @@ export default {
       })
     }, // 获取玩家列表
     initData () {
-
       let loginGameList = JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
       // 先组装有有玩家消费记录的报表
        for (let item  of this.playerGameList) {
@@ -301,7 +301,7 @@ export default {
       }).catch(()=>{
 
       });
-    },
+    }, // 商户冻结解冻
     changePassword () {
       this.$message.prompt('请输入新密码')
         .then((res) => {
@@ -325,7 +325,7 @@ export default {
       }).catch(()=>{
 
       });
-    }
+    } // 修改密码
   }
 }
 </script>
