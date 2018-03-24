@@ -21,6 +21,10 @@ export default {
   },
   methods: {
     jumpUrl (data) {
+//      参数说明：
+//      1、isUrl 是否是跳转链接
+//      2、param{state:1为存点 2为提点 3为解冻  4为改密}
+//      3、toFrom 表示存提点是从哪里的跳转来的 1为总报表顶层 2为代理层  3为玩家层
       if(data.isUrl) {
         this.$router.push({path: data.url, query: data.param})
       } else {

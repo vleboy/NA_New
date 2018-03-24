@@ -46,13 +46,13 @@ export default {
           name: '存点',
           img: require('assets/img/save.png'),
           url: '/saveRemind',
-          param:{state: 1}
+          param:{state: 1,toFrom:1}
         },
         {
           name: '提点',
           img: require('assets/img/get.png'),
           url: '/saveRemind',
-          param: {state: 2}
+          param: {state: 2,toFrom:1}
         }
       ]
     }
