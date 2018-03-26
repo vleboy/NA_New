@@ -7,25 +7,13 @@
     <div class="-p-content" v-if="!isSuccess">
       <div class="-c-item">
         <div class="-item-text">发起方:</div>
-        <div class="-item-name" v-if="!isEdit">
-          <span>James</span>
-          <span @click="showEdit" class="-item-edit">编辑</span>
-          <div class="-item-tip" :class="{'-tips-color-player': !isSave,'-tips-color-agent':isSave}">{{isSave ? '代理' : '玩家'}}</div>
-        </div>
-        <div class="-item-point" v-if="!isEdit">1111111111211</div>
-        <div v-if="isEdit">
+        <div>
           <input class="-item-input" type="text" placeholder="请输入发起方用户名" v-model="pointInfo.fromUser">
         </div>
       </div>
       <div class="-c-item">
         <div class="-item-text">接收方:</div>
-        <div class="-item-name" v-if="!isEdit">
-          <span>James2</span>
-          <span @click="showEdit" class="-item-edit">编辑</span>
-          <div class="-item-tip " :class="{'-tips-color-player': isSave,'-tips-color-agent':!isSave}">{{isSave ? '玩家' : '代理'}}</div>
-        </div>
-        <div class="-item-point" v-if="!isEdit">11111111111</div>
-        <div v-if="isEdit">
+        <div>
           <input class="-item-input" type="text" placeholder="请输入接收方用户名" v-model="pointInfo.toUser">
         </div>
       </div>
@@ -35,7 +23,7 @@
           <input type="text" placeholder="请输入交易点数" v-model="pointInfo.amount">
         </div>
       </div>
-      <div class="-c-item" v-if="isEdit">
+      <div class="-c-item">
         <label class="-item-text -item-type">{{isSave ? '接收方类型' : '发起方类型'}}:</label>
         <div class="-item-color">
           <span v-for="item of typeList" class="-item-btn" @click="checkType(item)"
@@ -45,6 +33,7 @@
         </div>
       </div>
     </div>
+
     <div v-else class="-p-content">
       <div class="-c-success-text">{{isSave ? '存点成功' : '提点成功'}}</div>
       <div class="-c-success-content">
@@ -71,6 +60,7 @@
       </div>
 
     </div>
+
     <div class="-p-footer">
       <a class="-button" @click="saveSubmit">{{isSuccess ? '关闭':'提交'}}</a>
     </div>
@@ -110,7 +100,20 @@ export default {
   },
   computed: {
     isSave () {
-      return this.$route.query.state === 1
+      return this.$route.query.state == 1
+    },
+    isComeFromTop () {
+      // 1为顶层存提点 2为玩家存提点
+      return this.$route.query.toFrom == 1
+    }
+  },
+  mounted() {
+    if(this.isSave) {
+      this.pointInfo.fromUser = this.isComeFromTop ? localStorage.loginUsername : ''
+      this.pointInfo.toUser = this.isComeFromTop ? '' : this.$route.query.userName
+    } else {
+      this.pointInfo.fromUser = this.isComeFromTop ? '' : this.$route.query.userName
+      this.pointInfo.toUser = this.isComeFromTop ? localStorage.loginUsername : ''
     }
   },
   methods: {

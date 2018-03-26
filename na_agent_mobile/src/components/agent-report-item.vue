@@ -15,7 +15,7 @@
           </span>
         </div>
       </li>
-      <li v-if="reportItemList.length" style="text-align: center">暂无代理数据</li>
+      <li v-if="!reportItemList.length" style="text-align: center">暂无代理数据</li>
     </ul>
   </div>
 </template>

@@ -31,7 +31,8 @@ export default {
           param: {
             agentSn: localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn,
             agentName: localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
-          }
+          },
+          isUrl: true
         },
         {
           name: '创建玩家',
@@ -40,19 +41,22 @@ export default {
           param: {
             agentSn: localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn,
             agentName: localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
-          }
+          },
+          isUrl: true
         },
         {
           name: '存点',
           img: require('assets/img/save.png'),
           url: '/saveRemind',
-          param:{state: 1,toFrom:1}
+          param:{state: 1,toFrom:1},
+          isUrl: true
         },
         {
           name: '提点',
           img: require('assets/img/get.png'),
           url: '/saveRemind',
-          param: {state: 2,toFrom:1}
+          param: {state: 2,toFrom:1},
+          isUrl: true
         }
       ]
     }
