@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <agent-header />
-    <agent-item />
+    <agent-header @searchDatetime="searchDatetime" />
+    <agent-item  ref="childMethod" @dispatchAgentList="searchDatetime"/>
   </div>
 </template>
 
@@ -17,6 +17,11 @@ export default {
     agentItem
   },
   mounted () {
+  },
+  methods: {
+    searchDatetime () {
+      this.$refs.childMethod.distribute()
+    }
   }
 }
 </script>

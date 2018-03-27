@@ -1,9 +1,9 @@
 <template>
   <div class="agent_item">
     <agent-info />
-    <agent-total-report />
-    <agent-report-items reportItemsTitle = "代理列表"/>
-    <player-report-items reportItemsTitle = "玩家列表"/>
+    <agent-total-report  ref="childMethodTotal"/>
+    <agent-report-items reportItemsTitle = "代理列表" ref="childMethodAgent" @getParentAgent="dispatchFirst"/>
+    <player-report-items reportItemsTitle = "玩家列表" ref="childMethodPlayer"/>
   </div>
 </template>
 
@@ -20,6 +20,17 @@ export default {
     agentTotalReport,
     agentReportItems,
     playerReportItems
+  },
+  methods: {
+    distribute () {
+      this.$refs.childMethodTotal.getAllReport()
+      this.$refs.childMethodPlayer.getPlayerList()
+      this.$refs.childMethodAgent.getAgentList()
+    },
+    dispatchFirst (item) {
+      console.log(item)
+      this.$emit('dispatchAgentList',item)
+    }
   }
 }
 </script>

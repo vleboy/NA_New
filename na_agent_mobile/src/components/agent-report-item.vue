@@ -59,6 +59,7 @@ export default {
       this.itemPlayerInfo = item
       this.showAgentReportIndex = index
       this.showAgentReportView = !this.showAgentReportView
+      this.$emit('getNewAgent',item)
     }
   }
 }

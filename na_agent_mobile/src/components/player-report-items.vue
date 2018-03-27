@@ -1,7 +1,7 @@
 <template>
   <div class="agent-report-items">
     <agent-title :title="reportItemsTitle" v-on:message="cnm" />
-    <player-report-item v-show="lag"/>
+    <player-report-item v-show="lag" ref="childMethodPlayerList" />
   </div>
 </template>
 
@@ -25,6 +25,9 @@ export default {
     cnm (data) {
       console.log(data)
       this.lag = !this.lag
+    },
+    getPlayerList () {
+      this.$refs.childMethodPlayerList.getPlayerList()
     }
   }
 }

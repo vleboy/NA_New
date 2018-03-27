@@ -152,7 +152,7 @@ export default {
         gameType: gameTypeList,
         role: localStorage.loginSuffix == 'Agent' ? '-1000' : '1000',
         userIds: [localStorage.loginId],
-        query: {createdAt: [1521431999000, 1521773026733]}
+        query: {createdAt: [1521993600000, 1522055896302]} //[1521431999000, 1521773026733]
       }
 
       // 获取该报表有的游戏
@@ -194,6 +194,7 @@ export default {
       })
     },// 获取总报表相关信息
     initData () {
+      this.gameLists = []
       let loginGameList = JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
 
       for (let [key,item] of Object.entries(this.gameDetail.gameTypeMap)) {

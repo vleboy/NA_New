@@ -27,7 +27,7 @@
 
     <transition name="timepicker-fade">
       <agent-timepicker
-        v-show="showTimepicker"
+        v-show="showTimepicker" @searchTime="searchDatetime"
       />
     </transition>
   </div>
@@ -44,6 +44,9 @@ export default {
     }
   },
   methods: {
+    searchDatetime () {
+      this.$emit('searchDatetime')
+    },
     showTimeView () {
       this.showTimepicker = !this.showTimepicker
     },

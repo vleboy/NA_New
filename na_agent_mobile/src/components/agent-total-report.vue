@@ -1,7 +1,7 @@
 <template>
   <div class="agent_total_report">
     <agent-title-item  title="总报表"  v-on:message="cnm" />
-    <agent-report-list v-show="lag" />
+    <agent-report-list v-show="lag" ref="childMethodTotalList"/>
   </div>
 </template>
 
@@ -21,8 +21,10 @@ export default {
   },
   methods: {
     cnm (data) {
-      console.log(data,1111)
       this.lag = !this.lag
+    },
+    getAllReport () {
+      this.$refs.childMethodTotalList.getAllReport()
     }
   }
 }

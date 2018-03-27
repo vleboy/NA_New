@@ -72,6 +72,7 @@ export default {
   methods: {
     getUserData (time, index) {
       this.show = index
+      console.log(time,index)
     },
     showTimeDefineView () {
       this.showTimeDefine = !this.showTimeDefine
@@ -83,7 +84,9 @@ export default {
       this.$refs[picker].open()
     },
     timeSearch () {
+      console.log(this.startDateValues, this.endDateValues)
       this.show = ''
+      this.$emit('searchTime')
     }
   }
 }
