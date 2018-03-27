@@ -1,6 +1,6 @@
 <template>
   <div class="agent_info">
-    <agentClickList></agentClickList>
+    <agentClickList @getNewAgentTop="refreshAgent"></agentClickList>
     <agentOperation :navOperation="operates"></agentOperation>
     <div class="agent_account">
       <ul>
@@ -95,6 +95,9 @@ export default {
   methods: {
     jumpUrl (data) {
       this.$router.push({path: data.url, query: data.param})
+    },
+    refreshAgent () {
+      this.$emit('getAgentClickNew')
     }
   }
 }

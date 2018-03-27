@@ -1,6 +1,6 @@
 <template>
   <div class="agent_item">
-    <agent-info />
+    <agent-info @getAgentClickNew="dispatchFirst"/>
     <agent-total-report  ref="childMethodTotal"/>
     <agent-report-items reportItemsTitle = "代理列表" ref="childMethodAgent" @getParentAgent="dispatchFirst"/>
     <player-report-items reportItemsTitle = "玩家列表" ref="childMethodPlayer"/>
@@ -28,7 +28,6 @@ export default {
       this.$refs.childMethodAgent.getAgentList()
     },
     dispatchFirst (item) {
-      console.log(item)
       this.$emit('dispatchAgentList',item)
     }
   }

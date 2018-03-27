@@ -153,7 +153,16 @@ export default {
         parent = this.userId
       }
       return parent
-    }
+    },
+    addParentId () {
+      let agent = ''
+      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+        agent = localStorage.loginSuffix == 'Agent' ? '01' : this.userId
+      } else {
+        agent = this.userId
+      }
+      return agent
+    } // 处理创建代理如果是直属那么传递的值为01
   },
   mounted () {
     for (let item of this.parentGameList) {
@@ -218,7 +227,9 @@ export default {
 
       param.role = '1000'
 
-      param.parent = this.userId
+      param.parent = this.addParentId
+
+      param.sn = this.$route.query.agentSn
 
       // 处理所代理的游戏洗码比
       for (let item of this.parentGameList) {

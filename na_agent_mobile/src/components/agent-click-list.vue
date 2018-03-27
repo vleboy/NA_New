@@ -2,7 +2,7 @@
   <div class="agent_click-list">
     <div class="-list-wrap" v-for="item of agentList">
       <div class="-list-item">
-        <span class="-name">代理 {{item.displayName}}</span>
+        <span class="-name" @click="agentDetail(item)">代理 {{item.displayName}}</span>
         <span class="-btn" @click="delAgent(item)"><img src="../assets/img/del.png"></span>
       </div>
     </div>
@@ -22,6 +22,14 @@ export default {
     }
   },
   methods: {
+    agentDetail (item) {
+      console.log(item)
+      this.$store.commit({
+        type: 'agentInfo_storageAgentItem',
+        data: item
+      })
+      this.$emit('getNewAgentTop',item)
+    },
     delAgent (item) {
       this.$store.commit({
         type: 'agentInfo_storageAgentList',
