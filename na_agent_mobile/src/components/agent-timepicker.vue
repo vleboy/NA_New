@@ -8,7 +8,7 @@
           @click="getUserData(time, index)"
           :class="{ active: show === index }"
         >
-          {{time}}
+          {{time.name}}
         </span>
       </div>
 
@@ -49,11 +49,26 @@ export default {
   data () {
     return {
       times: [
-        '1小时',
-        '今日',
-        '三日',
-        '本周',
-        '本月'
+        {
+          name: '1小时',
+          id: 1
+        },
+        {
+          name: '今日',
+          id: 2
+        },
+        {
+          name: '三日',
+          id: 3
+        },
+        {
+          name: '本周',
+          id: 4
+        },
+        {
+          name: '本月',
+          id: 5
+        }
       ],
       show: '',
       showTimeDefine: false,
@@ -70,9 +85,47 @@ export default {
     }
   },
   methods: {
-    getUserData (time, index) {
+    getUserData (time,index) {
+      if(this.show === index) return
+      this.showTimeDefine = false
       this.show = index
-      console.log(time,index)
+      let nowTime = new Date()
+      let startDateTime,endDateTime = ''
+      switch (time.id) {
+        case 1:
+          // 获取一小时数据
+          startDateTime = nowTime.getTime()
+          endDateTime = nowTime.getTime() + 60*60*1000
+              break
+        case 2:
+          // 获取一天数据
+          startDateTime = nowTime.setHours(0,0,0,0)
+          endDateTime = nowTime.setHours(0,0,0,0) + 24*60*60*1000-1
+              break
+        case 3:
+          // 获取三日数据
+          startDateTime = nowTime.setHours(0,0,0,0) - 2*24*3600*1000
+          endDateTime = nowTime.setHours(0,0,0,0) +  24*60*60*1000-1
+              break
+        case 4:
+          // 获取本周数据
+          startDateTime = this.getWeek().setHours(0, 0, 0, 0)
+          endDateTime = this.getWeek().setHours(0, 0, 0, 0) + 7*24*3600*1000 - 1
+              break
+        case 5:
+          // 获取本月数据
+          startDateTime = new Date(nowTime.setMonth(nowTime.getMonth(),1)).setHours(0,0,0,0)
+          endDateTime =  new Date(nowTime.setMonth(nowTime.getMonth()+1,0)).setHours(0,0,0,0)+24*3600*1000-1
+              break
+      }
+      this.$store.commit({
+        type: 'agentInfo_dateTime',
+        data: {
+          startDateTime: startDateTime,
+          endDateTime: endDateTime
+        }
+      })
+      this.$emit('searchTime')
     },
     showTimeDefineView () {
       this.showTimeDefine = !this.showTimeDefine
@@ -84,10 +137,28 @@ export default {
       this.$refs[picker].open()
     },
     timeSearch () {
-      console.log(this.startDateValues, this.endDateValues)
+      if(!this.startDateValues || !this.endDateValues) {
+        return  this.$toast({
+          position: 'top',
+          message: `请输入完整的日期`,
+          className: '-item-message'
+        });
+      }
       this.show = ''
+      this.$store.commit({
+        type: 'agentInfo_dateTime',
+        data: {
+          startDateTime: new Date(this.startDateValues).getTime(),
+          endDateTime: new Date(this.endDateValues).getTime()
+        }
+      })
       this.$emit('searchTime')
-    }
+    },
+    getWeek() {
+      let nowDate= new Date()  ;
+      let nowDay = nowDate.getDay() || 7;
+      return new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() + 1 - nowDay);
+    } // 处理周次
   }
 }
 </script>

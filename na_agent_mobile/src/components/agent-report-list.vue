@@ -134,9 +134,25 @@ export default {
       }
     }
   },
+  computed: {
+    dateTime () {
+      let time,startDateTime,endDateTime = ''
+
+      if (this.$store.state.dateTime == '') {
+        startDateTime = this.getWeek().setHours(0, 0, 0, 0)
+        endDateTime = this.getWeek().setHours(0, 0, 0, 0) + 7*24*3600*1000 - 1
+      } else {
+        startDateTime = this.$store.state.dateTime.startDateTime
+        endDateTime = this.$store.state.dateTime.endDateTime
+      }
+
+      time = [startDateTime, endDateTime]
+
+      return time
+    }
+  },
   mounted () {
-    this.getAllReport()
-    this.getBills()
+    this.getHomeData()
   },
   methods: {
     showTotalReport () {
@@ -145,6 +161,10 @@ export default {
     showGameListInfo (index) {
       this.showGameListInfoIndex = index
       this.showGameListInfoView = !this.showGameListInfoView
+    },
+    getHomeData () {
+      this.getAllReport()
+      this.getBills()
     },
     getBills () {
       this.$indicator.open({
@@ -172,7 +192,9 @@ export default {
         gameType: gameTypeList,
         role: localStorage.loginSuffix == 'Agent' ? '-1000' : '1000',
         userIds: [localStorage.loginId],
-        query: {createdAt: [1521993600000, 1522055896302]} //[1521431999000, 1521773026733]
+        query: {
+          createdAt: this.dateTime
+        } //[1521431999000, 1521773026733]
       }
 
       // 获取该报表有的游戏
@@ -192,9 +214,9 @@ export default {
       })
 
       this.$http({
-          method: 'post',
-          url: api.calcUserStat,
-          data: test
+        method: 'post',
+        url: api.calcUserStat,
+        data: test
         }).then(res => {
 
         this.$indicator.close()
@@ -231,7 +253,12 @@ export default {
         }
         this.gameLists.push(item)
       }
-    }// 数据组装，处理数据
+    },// 数据组装，处理数据
+    getWeek() {
+      let nowDate= new Date()  ;
+      let nowDay = nowDate.getDay() || 7;
+      return new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() + 1 - nowDay);
+    } // 处理周次
   }
 }
 </script>

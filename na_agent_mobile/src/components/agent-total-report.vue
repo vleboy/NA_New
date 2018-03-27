@@ -24,7 +24,7 @@ export default {
       this.lag = !this.lag
     },
     getAllReport () {
-      this.$refs.childMethodTotalList.getAllReport()
+      this.$refs.childMethodTotalList.getHomeData()
     }
   }
 }

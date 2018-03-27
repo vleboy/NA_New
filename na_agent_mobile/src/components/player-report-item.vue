@@ -172,6 +172,21 @@ export default {
         }
       ]
       return array
+    },
+    dateTime () {
+      let time,startDateTime,endDateTime = ''
+
+      if (this.$store.state.dateTime == '') {
+        startDateTime = this.getWeek().setHours(0, 0, 0, 0)
+        endDateTime = this.getWeek().setHours(0, 0, 0, 0) + 7*24*3600*1000 - 1
+      } else {
+        startDateTime = this.$store.state.dateTime.startDateTime
+        endDateTime = this.$store.state.dateTime.endDateTime
+      }
+
+      time = [startDateTime, endDateTime]
+
+      return time
     }
   },
   mounted () {
@@ -217,6 +232,14 @@ export default {
     getPlayerListDetail (list) {
       let gameTypeList = []
 
+      let test = {
+        gameType: gameTypeList,
+        gameUserNames: list,
+        query: {
+          createdAt: this.dateTime
+        }
+      }
+
       // 获取该报表有的游戏
       if (JSON.parse(localStorage.loginGameList).length) {
         for (let item of JSON.parse(localStorage.loginGameList)) {
@@ -236,11 +259,7 @@ export default {
       this.$http({
         method: 'post',
         url: api.calcPlayerStat,
-        data: {
-          gameType: gameTypeList,
-          gameUserNames: list,
-          query: {createdAt: [1521431999000, 1521773026733]}
-        }
+        data: test
       }).then(res => {
         this.playerGameList = res.data.payload
         this.$indicator.close()
@@ -325,7 +344,12 @@ export default {
       }).catch(()=>{
 
       });
-    } // 修改密码
+    }, // 修改密码
+    getWeek() {
+      let nowDate= new Date()  ;
+      let nowDay = nowDate.getDay() || 7;
+      return new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() + 1 - nowDay);
+    } // 处理周次
   }
 }
 </script>
