@@ -9,7 +9,7 @@
           </div>
           <span>
             {{item.balance}}
-             <i :class="{ showTotalReportActive: !(showAgentReportView && index === showAgentReportIndex) }">
+             <i>
                <img src="../assets/img/sub-lag.png" alt="">
              </i>
           </span>

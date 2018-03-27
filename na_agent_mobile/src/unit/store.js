@@ -7,7 +7,8 @@ Vue.use(vuex);
 
 
 const state = {
-  agentInfo: {}
+  agentInfo: {},
+  balance: ''
 }
 
 const getters = {}
@@ -17,6 +18,9 @@ const actions = {}
 const mutations = {
   agentInfo_title (state, payload) {
     state.agentInfo = payload.data
+  },
+  agentInfo_balance (state, payload) {
+    state.balance = payload.data
   }
 }
 

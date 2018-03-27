@@ -5,7 +5,7 @@
       <ul>
         <li>
           <label>剩余点数</label>
-          <span>{{agentInfo.balance || 0}}</span>
+          <span>{{balance || 0}}</span>
         </li>
         <li>
           <label>总洗码量</label>
@@ -64,6 +64,9 @@ export default {
   computed: {
     agentInfo () {
       return this.$store.state.agentInfo
+    },
+    balance () {
+      return this.$store.state.balance
     }
   },
   methods: {

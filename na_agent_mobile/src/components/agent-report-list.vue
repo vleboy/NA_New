@@ -136,6 +136,7 @@ export default {
   },
   mounted () {
     this.getAllReport()
+    this.getBills()
   },
   methods: {
     showTotalReport () {
@@ -145,6 +146,25 @@ export default {
       this.showGameListInfoIndex = index
       this.showGameListInfoView = !this.showGameListInfoView
     },
+    getBills () {
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+      this.$http({
+        method: 'get',
+        url: `${api.bills}/${localStorage.getItem('loginId')}`
+      }).then(res => {
+        this.$indicator.close()
+
+        this.$store.commit({
+          type: 'agentInfo_balance',
+          data: res.data.payload.balance
+        }) // 存储显示剩余点数
+      }).catch(err=>{
+
+      })
+    }, // 获取剩余点数
     getAllReport () {
       let gameTypeList = []
 
@@ -187,7 +207,7 @@ export default {
         this.$store.commit({
           type: 'agentInfo_title',
           data: this.gameDetail
-        }) // 存储显示剩余点数以及洗码量
+        }) // 存储显示剩余洗码量
 
       }).catch(error => {
         this.$indicator.close()
