@@ -1,5 +1,6 @@
 <template>
   <div class="agent_info">
+    <agentClickList></agentClickList>
     <agentOperation :navOperation="operates"></agentOperation>
     <div class="agent_account">
       <ul>
@@ -18,9 +19,10 @@
 
 <script>
 import agentOperation from './agent-operation'
+import agentClickList from './agent-click-list'
 export default {
   name: 'agent-info',
-  components:{agentOperation},
+  components:{agentOperation,agentClickList},
   data () {
     return {
       operates: [

@@ -60,6 +60,12 @@ export default {
       this.showAgentReportIndex = index
       this.showAgentReportView = !this.showAgentReportView
       this.$emit('getNewAgent',item)
+      this.$store.commit({
+        type: 'agentInfo_storageAgentList',
+        data: item,
+        state: 1
+      })
+
     }
   }
 }
