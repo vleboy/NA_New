@@ -29,8 +29,22 @@ export default {
   data() {
     return{
       reportItemList: [],
-      showAgentReportView: false,
-      showAgentReportIndex: '' //首层玩家展示隐藏
+      itemPlayerInfo: ''
+    }
+  },
+  computed: {
+    userId () {
+      // 默认为登录用户的代理信息  点击代理列表后，开始传递点击代理的信息
+      return this.$store.state.storageAgentOne.userId || localStorage.loginId
+    },
+    parentId () {
+      let param = ''
+      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+        param = localStorage.loginSuffix == 'Agent' ? '01' : this.userId
+      } else {
+        param = this.userId
+      }
+      return param
     }
   },
   mounted () {
@@ -44,9 +58,9 @@ export default {
       })
       this.$http({
         method: 'post',
-        url: api. reportInfo,
+        url: api.reportInfo,
         data: {
-          parent: localStorage.loginSuffix == 'Agent' ? '01' : localStorage.loginId
+          parent: this.parentId
         }
       }).then(res => {
         this.$indicator.close()
@@ -56,16 +70,18 @@ export default {
       })
     }, // 获取代理列表
     showAgentReport (item,index) {
+      if(this.itemPlayerInfo && (this.itemPlayerInfo.userId == item.userId)) return
       this.itemPlayerInfo = item
-      this.showAgentReportIndex = index
-      this.showAgentReportView = !this.showAgentReportView
-      this.$emit('getNewAgent',item)
       this.$store.commit({
         type: 'agentInfo_storageAgentList',
         data: item,
         state: 1
-      })
-
+      }) // 记录代理列表点击记录
+      this.$store.commit({
+        type: 'agentInfo_storageAgentItem',
+        data: item
+      }) // 存储单个代理信息
+      this.$emit('getNewAgent',item)
     }
   }
 }

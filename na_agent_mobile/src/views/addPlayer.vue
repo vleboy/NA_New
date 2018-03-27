@@ -103,8 +103,32 @@ export default {
     }
   },
   computed: {
+    gameList () {
+      return this.$store.state.storageAgentOne.gameList || JSON.parse(localStorage.loginGameList)
+    },
     parentGameList () {
-      return JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
+      let param = ''
+
+      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+        param = this.gameList.length ?  this.gameList : this.gameReportForm
+      } else {
+        param = this.gameList
+      }
+
+      return param
+    },
+    userId () {
+      // 默认为登录用户的代理信息  点击代理列表后，开始传递点击代理的信息
+      return this.$store.state.storageAgentOne.userId || localStorage.loginId
+    },
+    parentPlayerId () {
+      let parent = ''
+      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+        parent = localStorage.loginSuffix == 'Agent' ? '' : this.userId
+      } else {
+        parent = this.userId
+      }
+      return parent
     }
   },
   mounted () {
@@ -122,19 +146,11 @@ export default {
       })
       this.$http({
         method: 'get',
-        url: `${api.bills}/${localStorage.loginId}`
+        url: `${api.bills}/${this.userId}`
       }).then(res => {
         this.$indicator.close()
-        if (res.data.code != '0') {
-          this.$toast({
-            position: 'top',
-            message: `${res.data.msg}`,
-            className: '-item-message'
-          })
-        } else {
-          this.billInfo = res.data.payload
-          this.pointsTip = `可分配点数为：${this.billInfo.balance}`
-        }
+        this.billInfo = res.data.payload
+        this.pointsTip = `可分配点数为：${this.billInfo.balance}`
       }).catch(err => {
         this.$indicator.close()
       })
@@ -148,7 +164,7 @@ export default {
         method: 'post',
         url: api.chipList,
         data: {
-          parentId: localStorage.loginSuffix == 'Agent' ? '' : localStorage.loginId
+          parentId: this.parentPlayerId
         }
       }).then(res => {
         this.$indicator.close()
@@ -174,7 +190,7 @@ export default {
 
       param.gameList = []
 
-      param.parentId = localStorage.loginId
+      param.parentId = this.userId
 
       // 处理所代理的游戏洗码比
       for (let item of this.parentGameList) {

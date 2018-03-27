@@ -10,7 +10,8 @@ const state = {
   agentInfo: {},
   balance: '',
   dateTime: '',
-  storageAgentList: []
+  storageAgentList: [],
+  storageAgentOne: ''
 }
 
 const getters = {
@@ -39,7 +40,10 @@ const mutations = {
         }
       }
     }
-  } // 存储or删除 代理列表
+  }, // 存储or删除 代理列表
+  agentInfo_storageAgentItem (state, payload) {
+    state.storageAgentOne = payload.data
+  } // 存储单个代理信息
 }
 
 export default new vuex.Store({

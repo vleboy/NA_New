@@ -24,15 +24,18 @@ export default {
   name: 'agent-info',
   components:{agentOperation,agentClickList},
   data () {
-    return {
-      operates: [
+    return {}
+  },
+  computed: {
+    operates () {
+      let navList = [
         {
           name: '创建代理',
           img: require('assets/img/add-agent.png'),
           url: '/addAgent',
           param: {
-            agentSn: localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn,
-            agentName: localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
+            agentSn: this.addAgentSn,
+            agentName: this.addAgentName
           },
           isUrl: true
         },
@@ -41,8 +44,8 @@ export default {
           img: require('assets/img/add-player.png'),
           url: '/addPlayer',
           param: {
-            agentSn: localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn,
-            agentName: localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
+            agentSn: this.addAgentSn,
+            agentName: this.addAgentName
           },
           isUrl: true
         },
@@ -61,14 +64,32 @@ export default {
           isUrl: true
         }
       ]
-    }
-  },
-  computed: {
+
+      return navList
+    },
     agentInfo () {
       return this.$store.state.agentInfo
     },
     balance () {
       return this.$store.state.balance
+    },
+    addAgentSn () {
+      let param = ''
+      if (this.$store.state.storageAgentOne == '') {
+        param = localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn
+      } else {
+        param =  this.$store.state.storageAgentOne.sn
+      }
+      return param
+    },
+    addAgentName () {
+      let param = ''
+      if (this.$store.state.storageAgentOne == '') {
+        param = localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
+      } else {
+        param =  this.$store.state.storageAgentOne.displayName
+      }
+      return param
     }
   },
   methods: {

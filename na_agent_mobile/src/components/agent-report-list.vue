@@ -149,6 +149,13 @@ export default {
       time = [startDateTime, endDateTime]
 
       return time
+    },
+    userId () {
+      // 默认为登录用户的代理信息  点击代理列表后，开始传递点击代理的信息
+      return this.$store.state.storageAgentOne.userId || localStorage.loginId
+    },
+    gameList () {
+      return this.$store.state.storageAgentOne.gameList || JSON.parse(localStorage.loginGameList)
     }
   },
   mounted () {
@@ -173,7 +180,7 @@ export default {
       })
       this.$http({
         method: 'get',
-        url: `${api.bills}/${localStorage.getItem('loginId')}`
+        url: `${api.bills}/${this.userId}`
       }).then(res => {
         this.$indicator.close()
 
@@ -191,15 +198,15 @@ export default {
       let test = {
         gameType: gameTypeList,
         role: localStorage.loginSuffix == 'Agent' ? '-1000' : '1000',
-        userIds: [localStorage.loginId],
+        userIds: [this.userId],
         query: {
           createdAt: this.dateTime
-        } //[1521431999000, 1521773026733]
+        }
       }
 
       // 获取该报表有的游戏
-      if (JSON.parse(localStorage.loginGameList).length) {
-        for (let item of JSON.parse(localStorage.loginGameList)) {
+      if (this.gameList.length) {
+        for (let item of this.gameList) {
           gameTypeList.push(item.code)
         }
       } else {
@@ -237,7 +244,7 @@ export default {
     },// 获取总报表相关信息
     initData () {
       this.gameLists = []
-      let loginGameList = JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
+      let loginGameList = this.gameList.length ? this.gameList : this.gameReportForm
 
       for (let [key,item] of Object.entries(this.gameDetail.gameTypeMap)) {
         for (let data of loginGameList) {

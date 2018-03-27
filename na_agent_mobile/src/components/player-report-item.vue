@@ -187,6 +187,22 @@ export default {
       time = [startDateTime, endDateTime]
 
       return time
+    },
+    userId () {
+      // 默认为登录用户的代理信息  点击代理列表后，开始传递点击代理的信息
+      return this.$store.state.storageAgentOne.userId || localStorage.loginId
+    },
+    parentPlayerId () {
+      let param = ''
+      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+        param = localStorage.loginSuffix == 'Agent' ? '01' : this.userId
+      } else {
+        param = this.userId
+      }
+      return param
+    },
+    gameList () {
+      return this.$store.state.storageAgentOne.gameList || JSON.parse(localStorage.loginGameList)
     }
   },
   mounted () {
@@ -212,7 +228,7 @@ export default {
         method: 'post',
         url: api. reportPlayer,
         data: {
-          parentId: localStorage.loginSuffix == 'Agent' ? '01' : localStorage.loginId
+          parentId: this.parentPlayerId
         }
       }).then(res => {
         this.reportItemList = res.data.payload
@@ -241,8 +257,8 @@ export default {
       }
 
       // 获取该报表有的游戏
-      if (JSON.parse(localStorage.loginGameList).length) {
-        for (let item of JSON.parse(localStorage.loginGameList)) {
+      if (this.gameList.length) {
+        for (let item of this.gameList) {
           gameTypeList.push(+item.code)
         }
       } else {
@@ -269,7 +285,7 @@ export default {
       })
     }, // 获取玩家列表
     initData () {
-      let loginGameList = JSON.parse(localStorage.loginGameList).length ? JSON.parse(localStorage.loginGameList) : this.gameReportForm
+      let loginGameList = this.gameList.length ? this.gameList : this.gameReportForm
       // 先组装有有玩家消费记录的报表
        for (let item  of this.playerGameList) {
          for (let data of this.reportItemList) {

@@ -48,15 +48,7 @@
         url: `${api.bills}/${this.userId}`
       }).then(res => {
         this.$indicator.close()
-        if (res.data.code != '0') {
-          this.$toast({
-            position: 'top',
-            message: `${res.data.msg}`,
-            className: '-item-message'
-          })
-        } else {
-          this.userInfo = res.data.payload
-        }
+        this.userInfo = res.data.payload
       }).catch(err=>{
 
       })
