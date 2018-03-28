@@ -189,8 +189,14 @@ export default {
       return time
     },
     userId () {
+      let userId = ''
       // 默认为登录用户的代理信息  点击代理列表后，开始传递点击代理的信息
-      return this.$store.state.storageAgentOne.userId || localStorage.loginId
+      if (localStorage.loginSuffix == 'Agent' && this.$store.state.storageAgentOne.isFromStore) {  // 特殊情况（超管登录，点击下一级，在次返回顶层，传递的参数应该为01） 注意：登录人员不是超管情况不在此范围内
+        userId = '01'
+      } else {
+        userId = this.$store.state.storageAgentOne.userId || localStorage.loginId
+      }
+      return userId
     },
     parentPlayerId () {
       let param = ''

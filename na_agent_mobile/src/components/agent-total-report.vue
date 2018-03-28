@@ -33,5 +33,5 @@ export default {
 <style lang="stylus" scoped>
 // 总报表
 .agent_total_report
-  width 750px
+  width 100%
 </style>

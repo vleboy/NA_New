@@ -31,8 +31,28 @@ const mutations = {
     state.dateTime = payload.data
   },// 存储选择的时间
   agentInfo_storageAgentList (state, payload) {
+    let isAdd = false
+    payload.data.isTop = false   // 判断是否是当前登录的账号
     if (payload.state) {
-      state.storageAgentList.push(payload.data)
+      if (state.storageAgentList.length) {
+        for (let data of state.storageAgentList) {
+          if (data.userId == payload.data.userId) {
+            isAdd = true
+            break
+          }
+        }
+        !isAdd &&  state.storageAgentList.push(payload.data)
+      } else {
+        state.storageAgentList.push({
+          userId: localStorage.loginId,
+          sn: localStorage.loginSn,
+          displayName: localStorage.loginDisplayName,
+          gameList: JSON.parse(localStorage.loginGameList),
+          isTop: true,
+          isFromStore: true // 处理首次登录 和 点击下级之后产生的顶层代理列表记录  存储的信息
+        })
+        state.storageAgentList.push(payload.data)
+      }
     } else {
       for (let [index,item] of state.storageAgentList.entries()) {
         if(item.userId == payload.data.userId){

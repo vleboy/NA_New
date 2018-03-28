@@ -13,12 +13,12 @@
 
       <div class="agent_navbar">
 
-        <div class="navbar_search">
-          <img src="../assets/img/search.png" alt="">
-        </div>
+        <!--<div class="navbar_search">-->
+          <!--<img src="../assets/img/search.png" alt="">-->
+        <!--</div>-->
 
         <div class="navbar_menu">
-          <img src="../assets/img/menu.png" alt="">
+          <img src="../assets/img/exit.png" alt="" @click="loginOut">
         </div>
 
       </div>
@@ -33,7 +33,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
 import agentTimepicker from './agent-timepicker'
 export default {
   name: 'agent-header',
@@ -52,6 +52,14 @@ export default {
     },
     showUserInfo () {
       this.$router.push('/personal')
+    },
+    loginOut () {
+      this.$message.confirm('确定退出登录?').then(action => {
+        this.$router.push('/login')
+      localStorage.clear()
+    }).catch(error => {
+
+      });
     }
   },
   components: {
@@ -61,11 +69,15 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.agent_header
+  position: fixed;
+  z-index: 999999;
+  width: 100%
 // 顶部
 .agent_header_container
   display flex
   justify-content space-between
-  width 750px
+  width 100%
   height 80px
   line-height 80px
   font-size 36px
@@ -89,7 +101,7 @@ export default {
   display flex
   align-items: center;
   justify-content space-between
-  width 150px
+  width 70px
 
 .navbar_search, .navbar_menu
   width 50px

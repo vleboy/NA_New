@@ -107,7 +107,7 @@ export default {
 
 // 代理信息
 .agent_info
-  width 750px
+  width 100%
 
 .agent_info_operate
   height 120px

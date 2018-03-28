@@ -35,4 +35,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+  .agent_item{
+    position: absolute;
+    top: 80px;
+    width:100%;
+    overflow: hidden;
+  }
 </style>

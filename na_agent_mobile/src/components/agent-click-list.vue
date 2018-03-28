@@ -1,9 +1,12 @@
 <template>
   <div class="agent_click-list">
+    <div class="-list-wrap -list-title">
+      当前代理：{{agentNowInfo}}
+    </div>
     <div class="-list-wrap" v-for="item of agentList">
-      <div class="-list-item">
+      <div class="-list-item">{{item.isActive}}
         <span class="-name" @click="agentDetail(item)">代理 {{item.displayName}}</span>
-        <span class="-btn" @click="delAgent(item)"><img src="../assets/img/del.png"></span>
+        <span class="-btn" @click="delAgent(item)" v-if="!item.isTop"><img src="../assets/img/del.png"></span>
       </div>
     </div>
   </div>
@@ -19,11 +22,13 @@ export default {
   computed: {
     agentList () {
       return this.$store.state.storageAgentList
+    },
+    agentNowInfo () {
+      return this.$store.state.storageAgentOne.displayName || localStorage.loginDisplayName
     }
   },
   methods: {
     agentDetail (item) {
-      console.log(item)
       this.$store.commit({
         type: 'agentInfo_storageAgentItem',
         data: item
@@ -49,13 +54,13 @@ export default {
     .-list-wrap{
       display: inline-block;
       height: 60px;
-      width: 44%;
+      width: 100%;
       padding: 0 20px;
+      font-size: 30px;
 
       span{
         display: inline-block;
         line-height: 60px;
-        font-size: 30px;
       }
 
       .-name {
@@ -72,7 +77,7 @@ export default {
         width: 20%;
 
         img{
-          width:50%;
+          width:25%;
         }
       }
       .-list-item{
@@ -80,6 +85,13 @@ export default {
         justify-content: space-between;
         height: 60px;
       }
+    }
+
+    .-list-title{
+      background-color: #14a4da;
+    }
+    .active {
+      border:2px solid;
     }
   }
 </style>
