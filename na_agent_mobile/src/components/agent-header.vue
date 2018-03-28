@@ -54,10 +54,15 @@ export default {
       this.$router.push('/personal')
     },
     loginOut () {
-      this.$message.confirm('确定退出登录?').then(action => {
-        this.$router.push('/login')
-      localStorage.clear()
-    }).catch(error => {
+      this.$message.confirm('确定退出登录?')
+        .then(action => {
+          this.$store.commit({
+            type: 'agentInfo_storageAgentList',
+            state: 2
+          })
+          this.$router.push('/login')
+          localStorage.clear()
+        }).catch(error => {
 
       });
     }

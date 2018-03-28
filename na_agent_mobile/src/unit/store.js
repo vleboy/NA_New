@@ -31,33 +31,41 @@ const mutations = {
   },// 存储选择的时间
   agentInfo_storageAgentList (state, payload) {
     let isAdd = false
-    payload.data.isTop = false   // 判断是否是当前登录的账号
-    if (payload.state) {
-      if (state.storageAgentList.length) {
-        for (let data of state.storageAgentList) {
-          if (data.userId == payload.data.userId) {
-            isAdd = true
-            break
+
+    // 根据状态来判断当前数组的操作 0 为删除某一项 1位添加某一项 2为删除所有（退出登录时使用）
+    switch (payload.state) {
+      case 0:
+        for (let [index,item] of state.storageAgentList.entries()) {
+          if(item.userId == payload.data.userId){
+            state.storageAgentList.splice(index,1)
           }
         }
-        !isAdd &&  state.storageAgentList.push(payload.data)
-      } else {
-        state.storageAgentList.push({
-          userId: localStorage.loginId,
-          sn: localStorage.loginSn,
-          displayName: localStorage.loginDisplayName,
-          gameList: JSON.parse(localStorage.loginGameList),
-          isTop: true,
-          isFromStore: true // 处理首次登录 和 点击下级之后产生的顶层代理列表记录  存储的信息
-        })
-        state.storageAgentList.push(payload.data)
-      }
-    } else {
-      for (let [index,item] of state.storageAgentList.entries()) {
-        if(item.userId == payload.data.userId){
-          state.storageAgentList.splice(index,1)
+            break
+      case 1:
+        payload.data.isTop = false   // 判断是否是当前登录的账号
+        if (state.storageAgentList.length) {
+          for (let data of state.storageAgentList) {
+            if (data.userId == payload.data.userId) {
+              isAdd = true
+              break
+            }
+          }
+          !isAdd &&  state.storageAgentList.push(payload.data)
+        } else {
+          state.storageAgentList.push({
+            userId: localStorage.loginId,
+            sn: localStorage.loginSn,
+            displayName: localStorage.loginDisplayName,
+            gameList: JSON.parse(localStorage.loginGameList),
+            isTop: true,
+            isFromStore: true // 处理首次登录 和 点击下级之后产生的顶层代理列表记录  存储的信息
+          })
+          state.storageAgentList.push(payload.data)
         }
-      }
+            break
+      case 2:
+            state.storageAgentList = []
+            break
     }
   }, // 存储or删除 代理列表
   agentInfo_storageAgentItem (state, payload) {

@@ -54,13 +54,13 @@ export default {
     .-list-wrap{
       display: inline-block;
       height: 60px;
+      line-height: 60px;
       width: 100%;
       padding: 0 20px;
       font-size: 30px;
 
       span{
         display: inline-block;
-        line-height: 60px;
       }
 
       .-name {
