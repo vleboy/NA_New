@@ -219,6 +219,10 @@ export default {
       this.itemPlayerInfo = item
       this.showPlayerReportIndex = index
       this.showPlayerReportView = !this.showPlayerReportView
+      this.$store.commit({
+        type: 'agentInfo_storagePlayerItem',
+        data: item
+      })
     },
     showGameListInfo (index) {
       this.showGameListInfoIndex = index
@@ -335,6 +339,7 @@ export default {
             }
           }).then(res => {
             this.getPlayerList()
+            this.itemPlayerInfo.state = this.itemPlayerInfo.state ? 0 : 1 // 这里需要手动控制玩家冻结和解冻的状态，不影响获取列表信息
             this.$indicator.close()
           }).catch(error => {
             this.$indicator.close()

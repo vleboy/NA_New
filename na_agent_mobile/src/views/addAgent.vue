@@ -188,7 +188,6 @@ export default {
       }).catch(err=>{
         this.$indicator.close()
       })
-
     },
     getChildAgentList () {
       this.$indicator.open({

@@ -48,21 +48,22 @@ export default {
             agentName: this.addAgentName
           },
           isUrl: true
-        },
-        {
-          name: '存点',
-          img: require('assets/img/save.png'),
-          url: '/saveRemind',
-          param:{state: 1,toFrom:1},
-          isUrl: true
-        },
-        {
-          name: '提点',
-          img: require('assets/img/get.png'),
-          url: '/saveRemind',
-          param: {state: 2,toFrom:1},
-          isUrl: true
         }
+//        ,
+//        {
+//          name: '存点',
+//          img: require('assets/img/save.png'),
+//          url: '/saveRemind',
+//          param:{state: 1,toFrom:1},
+//          isUrl: true
+//        },
+//        {
+//          name: '提点',
+//          img: require('assets/img/get.png'),
+//          url: '/saveRemind',
+//          param: {state: 2,toFrom:1},
+//          isUrl: true
+//        }
       ]
 
       return navList

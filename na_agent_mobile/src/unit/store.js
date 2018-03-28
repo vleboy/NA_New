@@ -7,16 +7,15 @@ Vue.use(vuex);
 
 
 const state = {
-  agentInfo: {},
-  balance: '',
-  dateTime: '',
-  storageAgentList: [],
-  storageAgentOne: ''
+  agentInfo: {}, // 存取获取洗码量
+  balance: '',// 顶层剩余点数
+  dateTime: '', // 存取搜索的时间
+  storageAgentList: [], // 存取点击过的代理列表
+  storageAgentOne: '', // 当前获取的代理信息
+  storagePlayerOne: '' // 获取单个玩家信息
 }
 
-const getters = {
-
-}
+const getters = {}
 
 const actions = {}
 
@@ -63,7 +62,10 @@ const mutations = {
   }, // 存储or删除 代理列表
   agentInfo_storageAgentItem (state, payload) {
     state.storageAgentOne = payload.data
-  } // 存储单个代理信息
+  }, // 存储单个代理信息,
+  agentInfo_storagePlayerItem (state, payload) {
+    state.storagePlayerOne = payload.data
+  } // 存储单个玩家信息
 }
 
 export default new vuex.Store({

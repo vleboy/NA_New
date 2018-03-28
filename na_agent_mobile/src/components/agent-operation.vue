@@ -56,6 +56,7 @@ export default {
   ul
     display flex
     height 100%
+    justify-content space-around;
     li
       display flex
       flex-direction column

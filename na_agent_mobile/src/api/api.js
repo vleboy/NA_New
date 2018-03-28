@@ -23,9 +23,13 @@ export default {
 
   bills: `${baseUrl.stat}/bills`, // 获取用户个人信息
 
-  points: `${baseUrl.stat}/points`, // 存提点
+  points: `${baseUrl.stat}/points`, // 存提点（暂时不用）
 
   forzen: `${baseUrl.stat}/player/forzen`, // 冻结、解冻
+
+  take: `${baseUrl.stat}/agent/player/take`, // 玩家提点
+
+  deposit: `${baseUrl.stat}/agent/player/deposit`, // 玩家存点
 
   password: `${baseUrl.stat}/agent/player/password` // 修改密码
 }
