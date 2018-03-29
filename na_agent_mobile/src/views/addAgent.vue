@@ -62,7 +62,7 @@
             <div>{{item.chip}}</div>
             <div class="-c-checked-img" v-if="item.isChecked"><img src="/static/checked.png"></div>
           </div>
-          <div v-if="!limitList.length">暂无数据</div>
+          <div v-if="!limitList.length" style="text-align: center">暂无数据</div>
         </div>
       </div>
     </div>

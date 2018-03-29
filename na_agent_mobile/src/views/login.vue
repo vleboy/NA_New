@@ -67,6 +67,7 @@ export default {
           localStorage.setItem('loginUsername', loginInfo.username)
           localStorage.setItem('loginParentName', loginInfo.parentName)
           localStorage.setItem('loginGameList', JSON.stringify(loginInfo.gameList))
+          localStorage.setItem('loginRate', JSON.stringify(loginInfo.rate))
           this.$router.push('/home')
       }).catch(()=>{
           this.$indicator.close()
