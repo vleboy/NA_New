@@ -60,6 +60,10 @@ export default {
             type: 'agentInfo_storageAgentList',
             state: 2
           })
+          this.$store.commit({
+            type: 'agentInfo_storageAgentItem',
+            data: []
+          })
           this.$router.push('/login')
           localStorage.clear()
         }).catch(error => {

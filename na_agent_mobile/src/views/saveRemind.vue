@@ -8,18 +8,18 @@
       <div class="-c-item">
         <div class="-item-text">发起方:</div>
         <div class="-item-name">
-          <span>{{isSave ? agentInfo.username : playerInfo.userName}}</span>
-          <div class="-item-tip" :class="{'-tips-color-player': !isSave,'-tips-color-agent':isSave}">{{isSave ? '代理' : '玩家'}}</div>
+          <span>{{initiatorName}}</span>
+          <div class="-item-tip" :class="{'-tips-color-player': !isSave,'-tips-color-agent':isSave}">{{initiatorTag}}</div>
         </div>
-        <div class="-item-point">{{isSave ? balanceInfo : playerInfo.balance}}</div>
+        <div class="-item-point">{{initiatorBalance || 0}}</div>
       </div>
       <div class="-c-item">
         <div class="-item-text">接收方:</div>
         <div class="-item-name">
-          <span>{{isSave ? playerInfo.userName : agentInfo.username}}</span>
-          <div class="-item-tip " :class="{'-tips-color-player': isSave,'-tips-color-agent':!isSave}">{{isSave ? '玩家' : '代理'}}</div>
+          <span>{{receiverName}}</span>
+          <div class="-item-tip " :class="{'-tips-color-player': isSave,'-tips-color-agent':!isSave}">{{receiverTag}}</div>
         </div>
-        <div class="-item-point">{{isSave ? playerInfo.balance : balanceInfo}}</div>
+        <div class="-item-point">{{receiverBalance}}</div>
       </div>
       <div class="-c-item">
         <label class="-item-text">交易点数:</label>
@@ -27,15 +27,6 @@
           <input type="text" placeholder="请输入交易点数" v-model="amount">
         </div>
       </div>
-      <!--<div class="-c-item">-->
-        <!--<label class="-item-text -item-type">{{isSave ? '接收方类型' : '发起方类型'}}:</label>-->
-        <!--<div class="-item-color">-->
-          <!--<span v-for="item of typeList" class="-item-btn" @click="checkType(item)"-->
-                <!--:class="{'-tips-color-agent':item.isChecked }">-->
-            <!--{{item.name}}-->
-          <!--</span>-->
-        <!--</div>-->
-      <!--</div>-->
     </div>
 
     <div v-else class="-p-content">
@@ -44,25 +35,25 @@
         <div class="-c-item">
           <div class="-item-text">发起方:</div>
           <div class="-item-name">
-            <span>{{isSave ? agentInfo.username : playerInfo.userName}}</span>
-            <div class="-item-tip" :class="{'-tips-color-player': !isSave,'-tips-color-agent':isSave}">{{isSave ? '代理' : '玩家'}}</div>
+            <span>{{initiatorName}}</span>
+            <div class="-item-tip" :class="{'-tips-color-player': !isSave,'-tips-color-agent':isSave}">{{initiatorTag}}</div>
           </div>
-          <div class="-item-point">{{isSave ? balanceInfo : playerInfo.balance}}</div>
+          <div class="-item-point">{{initiatorBalance}}</div>
         </div>
         <div class="-c-success-deduction">-{{amount||0}}</div>
-        <div class="-c-success-result">{{(isSave ? balanceInfo : playerInfo.balance)-amount}}</div>
+        <div class="-c-success-result">{{initiatorBalance-amount}}</div>
       </div>
       <div class="-c-success-content">
         <div class="-c-item">
           <div class="-item-text">接收方:</div>
           <div class="-item-name">
-            <span>{{isSave ? playerInfo.userName : agentInfo.username}}</span>
-            <div class="-item-tip" :class="{'-tips-color-player': isSave,'-tips-color-agent':!isSave}">{{isSave ? '玩家' : '代理'}}</div>
+            <span>{{receiverName}}</span>
+            <div class="-item-tip" :class="{'-tips-color-player': isSave,'-tips-color-agent':!isSave}">{{receiverTag}}</div>
           </div>
-          <div class="-item-point">{{isSave ? playerInfo.balance : balanceInfo}}</div>
+          <div class="-item-point">{{receiverBalance}}</div>
         </div>
         <div class="-c-success-deduction">+{{amount||0}}</div>
-        <div class="-c-success-result">{{+(isSave ? playerInfo.balance : balanceInfo)+(+amount)}}</div>
+        <div class="-c-success-result">{{+(receiverBalance)+(+amount)}}</div>
       </div>
 
     </div>
@@ -94,44 +85,93 @@ export default {
           isChecked: false
         }
       ],
-
-      amount: ''
+      amount: '',
+      parentBalance: ''
     }
   },
   computed: {
     balanceInfo () {
       return this.$store.state.balance
-    },
+    }, // 当前代理的剩余点数
     agentInfo () {
       return this.$store.state.storageAgentOne
-    },
+    }, // 单个代理信息
     playerInfo () {
       return this.$store.state.storagePlayerOne
-    },
+    }, // 单个玩家信息
+    parentUserId () {
+      return localStorage.loginSuffix=='Agent' ? localStorage.loginId : this.$store.state.storageAgentOne.parent
+    },// 获取上级的userID
     isSave () {
-      // 1为存点  2位提点
       return this.$route.query.state == 1
-    },
+    },// 1为存点  2位提点
     isComeFromTop () {
-      // 1为顶层存提点 2为玩家存提点
       return this.$route.query.toFrom == 1
-    }
+    }, // 1为代理存提点 2为玩家存提点
+    initiatorName () {
+      let param
+      if (this.isComeFromTop ) {
+        param = this.isSave ? this.agentInfo.parentDisplayName : this.agentInfo.displayName
+      } else {
+        param = this.isSave ? this.agentInfo.username : this.playerInfo.userName
+      }
+      return param
+    }, // 发起方名称
+    receiverName () {
+      let param
+      if (this.isComeFromTop ) {
+        param = this.isSave ? this.agentInfo.displayName : this.agentInfo.parentDisplayName
+      } else {
+        param = this.isSave ? this.playerInfo.userName : this.agentInfo.username
+      }
+      return param
+    }, // 接收方名称
+    initiatorTag () {
+      let param
+      if (this.isComeFromTop ) {
+        param = '代理'
+      } else {
+        param = this.isSave ? '代理' : '玩家'
+      }
+      return param
+    }, // 发起方标识提示
+    receiverTag () {
+      let param
+      if (this.isComeFromTop ) {
+        param = '代理'
+      } else {
+        param = this.isSave ? '玩家' : '代理'
+      }
+      return param
+    }, // 接收方标识提示
+    initiatorBalance () {
+      let param
+      if (this.isComeFromTop ) {
+        param = this.isSave ? this.parentBalance : this.balanceInfo
+      } else {
+        param = this.isSave ? this.balanceInfo : this.playerInfo.balance
+      }
+      return param
+    }, // 发起方余额
+    receiverBalance () {
+      let param
+      if (this.isComeFromTop ) {
+        param = this.isSave ? this.balanceInfo : this.parentBalance
+      } else {
+        param = this.isSave ? this.playerInfo.balance :  this.balanceInfo
+      }
+      return param
+    } // 接收方余额
   },
-  mounted() {
-//    if(this.isSave) {
-//      this.pointInfo.fromUser = this.isComeFromTop ? localStorage.loginUsername : ''
-//      this.pointInfo.toUser = this.isComeFromTop ? '' : this.$route.query.userName
-//    } else {
-//      this.pointInfo.fromUser = this.isComeFromTop ? '' : this.$route.query.userName
-//      this.pointInfo.toUser = this.isComeFromTop ? localStorage.loginUsername : ''
-//    }
+  mounted () {
+    this.isComeFromTop && this.getBills()
   },
   methods: {
     saveSubmit () {
       if(this.isSuccess) {
        return this.$router.push('/home')
       }
-      let param = {}
+
       if (!this.amount) {
         return this.$toast({
           position: 'top',
@@ -151,7 +191,32 @@ export default {
         spinnerType: 'fading-circle'
       })
 
-      param = {
+      this.isComeFromTop ? this.agentSaveRemind() : this.playerSaveRemind()
+
+    },
+    showEdit () {
+      this.isEdit = !this.isEdit
+    },
+    goBack () {
+      window.history.back()
+    },
+    getBills () {
+      this.$indicator.open({
+        text: '加载中...',
+        spinnerType: 'fading-circle'
+      })
+      this.$http({
+        method: 'get',
+        url: `${api.bills}/${this.parentUserId}`
+      }).then(res => {
+        this.$indicator.close()
+        this.parentBalance = res.data.payload.balance
+      }).catch(err=>{
+        this.$indicator.close()
+      })
+    }, // 获取剩余点数
+    playerSaveRemind () {
+      let param = {
         fromUserId: this.agentInfo.userId, // 代理ID
         toUser: this.playerInfo.userName, // 玩家用户民
         amount: this.amount // 金额
@@ -169,27 +234,34 @@ export default {
           className: '-item-message'
         })
         this.isSuccess = !this.isSuccess
-
-    }).catch(err=>{
+      }).catch(err=>{
         this.$indicator.close()
       })
+    },// 玩家存取点
+    agentSaveRemind () {
+      let param = {
+        fromUserId: this.isSave ? (localStorage.loginSuffix=='Agent' ? localStorage.loginId : this.agentInfo.parent) : this.agentInfo.userId, //  存点： 父级id  提点： 当前代理id
+        toUser: this.isSave ? this.agentInfo.username : this.agentInfo.parentName, // 存点：当前代理的用户名  提点： 父级用户名
+        amount: this.amount, // 金额
+        toRole: '1000'
+      }
 
-    },
-    showEdit () {
-      this.isEdit = !this.isEdit
-    },
-//    checkType(item){
-//      for (let data of this.typeList){
-//        if(data.id == item.id) {
-//          item.isChecked = !item.isChecked
-//        } else {
-//          data.isChecked = false
-//        }
-//      }
-//    },
-    goBack () {
-      window.history.back()
-    }
+      this.$http({
+        method: 'post',
+        url: api.billTransfer,
+        data:param
+      }).then(res => {
+        this.$indicator.close()
+        this.$toast({
+          position: 'top',
+          message: `交易成功`,
+          className: '-item-message'
+        })
+        this.isSuccess = !this.isSuccess
+      }).catch(err=>{
+        this.$indicator.close()
+      })
+    } //代理存取点
   }
 }
 </script>
@@ -236,10 +308,6 @@ export default {
           box-sizing: border-box;
         }
 
-        .-item-type{
-          width: 35%;
-        }
-
         .-item-name{
           width: 35%;
           text-align: center;
@@ -252,11 +320,6 @@ export default {
             margin: 0 auto;
             width: 2.2em;
           }
-
-          .-item-edit{
-            font-size: .8em;
-            color: #26a2ff;
-          }
         }
 
         .-tips-color-agent{
@@ -268,13 +331,6 @@ export default {
           border: 1px solid #e6a23c;
         }
 
-        .-item-input{
-          padding: 20px 0 0 10px;
-          width: 17.4em;
-          font-size: 30px;
-          border: none;
-          border-bottom: 1px solid #7f7f7f;
-        }
         .-item-point{
           text-align: right;
           width: 45%;
@@ -290,14 +346,6 @@ export default {
             font-size: 30px;
             border: none;
             border-bottom: 1px solid #7f7f7f;
-          }
-
-          .-item-btn{
-            border: 1px solid #7f7f7f;
-            display: inline-block;
-            padding: 2px 26px;
-            border-radius: 10px;
-            margin-right: 1em;
           }
         }
       }

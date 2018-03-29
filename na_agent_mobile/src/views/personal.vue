@@ -56,6 +56,10 @@
     loginOut () {
       this.$message.confirm('确定退出登录?').then(action => {
         this.$store.commit({
+          type: 'agentInfo_storageAgentItem',
+          data: []
+        })
+        this.$store.commit({
           type: 'agentInfo_storageAgentList',
           state: 2
         })

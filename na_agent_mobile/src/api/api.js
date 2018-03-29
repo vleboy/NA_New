@@ -31,5 +31,7 @@ export default {
 
   deposit: `${baseUrl.stat}/agent/player/deposit`, // 玩家存点
 
+  billTransfer: `${baseUrl.stat}/billTransfer`, // 代理对代理存取点
+
   password: `${baseUrl.stat}/agent/player/password` // 修改密码
 }

@@ -23,7 +23,6 @@ export default {
   },
   methods: {
     cnm (data) {
-      console.log(data)
       this.lag = !this.lag
     },
     getPlayerList () {

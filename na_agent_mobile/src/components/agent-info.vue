@@ -28,44 +28,69 @@ export default {
   },
   computed: {
     operates () {
-      let navList = [
-        {
-          name: '创建代理',
-          img: require('assets/img/add-agent.png'),
-          url: '/addAgent',
-          param: {
-            agentSn: this.addAgentSn,
-            agentName: this.addAgentName
-          },
-          isUrl: true
-        },
-        {
-          name: '创建玩家',
-          img: require('assets/img/add-player.png'),
-          url: '/addPlayer',
-          param: {
-            agentSn: this.addAgentSn,
-            agentName: this.addAgentName
-          },
-          isUrl: true
-        }
-//        ,
-//        {
-//          name: '存点',
-//          img: require('assets/img/save.png'),
-//          url: '/saveRemind',
-//          param:{state: 1,toFrom:1},
-//          isUrl: true
-//        },
-//        {
-//          name: '提点',
-//          img: require('assets/img/get.png'),
-//          url: '/saveRemind',
-//          param: {state: 2,toFrom:1},
-//          isUrl: true
-//        }
-      ]
+      let navList = []
 
+      if(this.$store.state.storageAgentOne != '' && this.$store.state.storageAgentOne.userId != localStorage.loginId) {
+        navList = [
+          {
+            name: '创建代理',
+            img: require('assets/img/add-agent.png'),
+            url: '/addAgent',
+            param: {
+              agentSn: this.addAgentSn,
+              agentName: this.addAgentName
+            },
+            isUrl: true
+          },
+          {
+            name: '创建玩家',
+            img: require('assets/img/add-player.png'),
+            url: '/addPlayer',
+            param: {
+              agentSn: this.addAgentSn,
+              agentName: this.addAgentName
+            },
+            isUrl: true
+          },
+          {
+            name: '存点',
+            img: require('assets/img/save.png'),
+            url: '/saveRemind',
+            param:{state: 1,toFrom:1},
+            isUrl: true
+          },
+          {
+            name: '提点',
+            img: require('assets/img/get.png'),
+            url: '/saveRemind',
+            param: {state: 2,toFrom:1},
+            isUrl: true
+          }
+        ]
+      } else {
+        navList = [
+          {
+            name: '创建代理',
+            img: require('assets/img/add-agent.png'),
+            url: '/addAgent',
+            param: {
+              agentSn: this.addAgentSn,
+              agentName: this.addAgentName
+            },
+            isUrl: true
+          },
+          {
+            name: '创建玩家',
+            img: require('assets/img/add-player.png'),
+            url: '/addPlayer',
+            param: {
+              agentSn: this.addAgentSn,
+              agentName: this.addAgentName
+            },
+            isUrl: true
+          }
+        ]
+      }
       return navList
     },
     agentInfo () {
