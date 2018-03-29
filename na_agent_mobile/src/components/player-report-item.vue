@@ -434,7 +434,7 @@ export default {
 
 // 报表详情
 .game_list_info
-  text-indent 6em
+  text-indent 5em
 
 .showTotalReportActive
   transform rotate(-90deg)

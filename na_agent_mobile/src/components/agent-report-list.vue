@@ -64,13 +64,13 @@
               </li>
               <li>
                 <label>代理交公司</label>
-                <span>{{ game.submitAmount||0}}
+                <span>{{ game.submitAmount}}
                   <i></i>
                 </span>
               </li>
               <li>
                 <label>代理占成</label>
-                <span>100%
+                <span>{{game.rate + '%'}}
                   <i></i>
                 </span>
               </li>
@@ -152,6 +152,16 @@ export default {
     },
     gameList () {
       return this.$store.state.storageAgentOne.gameList || JSON.parse(localStorage.loginGameList)
+    },
+    agentRate () {
+      let rate
+
+      if (this.$store.state.storageAgentOne) {
+        rate = this.$store.state.storageAgentOne.rate
+      } else {
+        rate = localStorage.loginRate
+      }
+      return rate
     }
   },
   mounted () {
@@ -248,11 +258,12 @@ export default {
             item.code = key // 游戏code
             item.name = data.name // 名称
             item.mix = data.mix // 返水比例
+            item.rate = this.agentRate // 代理占成
             item.betAmount = Math.abs(item.betAmount) // 格式化投注金额
             item.commission = (key == '30000') ? (item.mixAmount*item.mix).toFixed(2) : (item.betAmount*item.mix).toFixed(2)  // 佣金 (真人和其他游戏类型算法不一样)
             item.totalAmount = (+item.commission + item.winloseAmount).toFixed(2) // 代理总金额
             item.profitRatio = (key == '30000') ? (item.totalAmount/item.mixAmount).toFixed(2) : (item.totalAmount/item.betAmount).toFixed(2)  // 获利比例(真人和其他游戏类型算法不一样)
-            item.submitAmount = +item.totalAmount  // 代理交公司 代理总金额*（1-代理占成）=代理交公司
+            item.submitAmount = (+item.totalAmount * (1 - item.rate * 0.01)).toFixed(2)  // 代理交公司 代理总金额*（1-代理占成）=代理交公司
           }
         }
         this.gameLists.push(item)
