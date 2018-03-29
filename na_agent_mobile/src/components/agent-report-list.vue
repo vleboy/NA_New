@@ -11,21 +11,20 @@
       </span>
       <span v-else>暂无数据</span>
     </div>
-
     <div class="game_list" v-show="showTotalReportView">
       <ul>
         <li v-for="(game, index) in gameLists" :key="index">
-          <div class="game_list_items" @click="showGameListInfo(index)">
+          <div class="game_list_items" @click="showGameListInfo(game,index)">
             <label>{{ game.name }}</label>
             <span :class="{'total-report-green':game.winloseAmount > 0,'total-report-red':game.winloseAmount < 0}">
               {{ game.winloseAmount || 0}}
-              <i :class="{ showTotalReportActive2: showGameListInfoView && index === showGameListInfoIndex}" style="transform:rotate(-90deg)">
+              <i :class="{ showTotalReportActive2:  game.isActive}" style="transform:rotate(-90deg)">
                 <img src="../assets/img/sub-lag.png" alt="">
               </i>
             </span>
           </div>
 
-          <div class="game_list_info" v-show="showGameListInfoView && index === showGameListInfoIndex">
+          <div class="game_list_info" v-show="game.isActive">
             <ul>
               <li>
                 <label>交易次数</label>
@@ -45,7 +44,6 @@
                   <i></i>
                 </span>
               </li>
-
               <li>
                 <label>洗码量</label>
                 <span>{{ game.mixAmount }}
@@ -104,8 +102,6 @@ export default {
     return {
       gameLists: [],
       showTotalReportView: false,
-      showGameListInfoView: false,
-      showGameListInfoIndex: '',
       gameReportForm: [
         {
           code: '10000',
@@ -165,9 +161,9 @@ export default {
     showTotalReport () {
       this.showTotalReportView = !this.showTotalReportView
     },
-    showGameListInfo (index) {
-      this.showGameListInfoIndex = index
-      this.showGameListInfoView = !this.showGameListInfoView
+    showGameListInfo (item,index) {
+      this.gameLists[index].isActive = !this.gameLists[index].isActive
+      this.gameLists = Object.assign([],this.gameLists)
     },
     getHomeData () {
       this.getAllReport()
@@ -194,7 +190,7 @@ export default {
     }, // 获取剩余点数
     getAllReport () {
       let gameTypeList = []
-
+      this.gameLists = []
       let test = {
         gameType: gameTypeList,
         role: localStorage.loginSuffix == 'Agent' ? '-1000' : '1000',
@@ -243,12 +239,12 @@ export default {
       })
     },// 获取总报表相关信息
     initData () {
-      this.gameLists = []
       let loginGameList = this.gameList.length ? this.gameList : this.gameReportForm
 
       for (let [key,item] of Object.entries(this.gameDetail.gameTypeMap)) {
         for (let data of loginGameList) {
           if(key == data.code) {
+            item.isActive = false
             item.code = key // 游戏code
             item.name = data.name // 名称
             item.mix = data.mix // 返水比例
@@ -256,6 +252,7 @@ export default {
             item.commission = (key == '30000') ? (item.mixAmount*item.mix).toFixed(2) : (item.betAmount*item.mix).toFixed(2)  // 佣金 (真人和其他游戏类型算法不一样)
             item.totalAmount = (+item.commission + item.winloseAmount).toFixed(2) // 代理总金额
             item.profitRatio = (key == '30000') ? (item.totalAmount/item.mixAmount).toFixed(2) : (item.totalAmount/item.betAmount).toFixed(2)  // 获利比例(真人和其他游戏类型算法不一样)
+            item.submitAmount = +item.totalAmount  // 代理交公司 代理总金额*（1-代理占成）=代理交公司
           }
         }
         this.gameLists.push(item)

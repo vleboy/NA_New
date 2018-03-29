@@ -12,12 +12,12 @@
           </div>
           <span>
             {{item.balance || 0}}
-            <i :class="{ showTotalReportActive: !(showPlayerReportView && index === showPlayerReportIndex) }">
+            <i :class="{ showTotalReportActive: !item.isPlayerActive }">
               <img src="../assets/img/sub-lag.png" alt="">
             </i>
           </span>
         </div>
-        <div class="game_list" v-show="showPlayerReportView  && index === showPlayerReportIndex">
+        <div class="game_list" v-show="item.isPlayerActive">
           <agentOperation :navOperation="operates" @frozenClick="changeFrozen()" @passwordClick="changePassword()"></agentOperation>
           <ul class="game_list-ul">
             <li class="g-l-li">
@@ -45,17 +45,16 @@
               </div>
             </li>
             <li v-for="(game, index) in item.gameLists" :key="index">
-              <div class="game_list_items" @click="showGameListInfo(index)">
+              <div class="game_list_items" @click="showGameListInfo(game,index)">
                 <label>{{ game.name }}</label>
                 <span :class="{'total-report-green':game.winloseAmount > 0,'total-report-red':game.winloseAmount < 0}">
                   {{ game.winloseAmount || 0}}
-                  <i :class="{ showTotalReportActive2: showGameListInfoView && index === showGameListInfoIndex}" style="transform:rotate(-90deg)">
+                  <i :class="{ showTotalReportActive2: game.isGameActive}" style="transform:rotate(-90deg)">
                     <img src="../assets/img/sub-lag.png" alt="">
                   </i>
                 </span>
               </div>
-
-              <div class="game_list_info" v-show="showGameListInfoView && index === showGameListInfoIndex">
+              <div class="game_list_info" v-show="game.isGameActive">
                 <ul>
 
                   <li>
@@ -111,11 +110,6 @@ export default {
     return{
       reportItemList: [],
       itemPlayerInfo: {}, // 单个玩家详细
-      showPlayerReportView: false,
-      showGameListInfoView: false,
-      showPlayerReportIndex: '', // 首层玩家展示隐藏
-      showGameListInfoIndex: '', // 玩家下所属游戏报表显影
-      gameLists: [], // 相关游戏列表
       playerGameList: [], // 有游戏记录玩家数据
       gameReportForm: [
         {
@@ -217,16 +211,20 @@ export default {
   methods: {
     showPlayerReport (item,index) {
       this.itemPlayerInfo = item
-      this.showPlayerReportIndex = index
-      this.showPlayerReportView = !this.showPlayerReportView
+      this.reportItemList[index].isPlayerActive = !this.reportItemList[index].isPlayerActive
+      this.reportItemList = Object.assign([],this.reportItemList)
       this.$store.commit({
         type: 'agentInfo_storagePlayerItem',
         data: item
       })
     },
-    showGameListInfo (index) {
-      this.showGameListInfoIndex = index
-      this.showGameListInfoView = !this.showGameListInfoView
+    showGameListInfo (data,index) {
+      for (let [indexList,item] of this.reportItemList.entries()) {
+        if(item.userName == data.userName) {
+          this.reportItemList[indexList].gameLists[index].isGameActive = !this.reportItemList[indexList].gameLists[index].isGameActive
+          this.reportItemList= Object.assign([],this.reportItemList)
+        }
+      }
     },
     getPlayerList () {
       let playerList = []
@@ -247,6 +245,7 @@ export default {
           playerList.push(item.userName)
           item.gameLists = []
           item.gameInfo = ''
+          item.isPlayerActive = false
         }
 
         this.$indicator.close()
@@ -310,6 +309,8 @@ export default {
           for (let [key,item] of Object.entries(list.gameInfo.gameTypeMap)) {
             for (let data of loginGameList) {
               if(key == data.code) {
+                item.isGameActive = false
+                item.userName = list.userName
                 item.code = key // 游戏code
                 item.name = data.name // 名称
                 item.mix = data.mix // 返水比例
