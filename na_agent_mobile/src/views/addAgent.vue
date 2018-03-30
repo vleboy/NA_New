@@ -33,7 +33,7 @@
       <div class="-c-item">
         <label class="-item-text">昵称:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于8位字符" v-model="agentInfo.displayName">
+          <input type="text" placeholder="2-10位中英文或者数字" v-model="agentInfo.displayName">
         </div>
       </div>
       <div class="-c-item">
@@ -268,13 +268,19 @@ export default {
             message: `请输入${this.formValidationName[item]}`,
             className: '-item-message'
           });
-        } else if (!pattern.firstLetter.exec(this.agentInfo[item]) && (item=='username'||item=='password'||item=='displayName')) {
+        } else if (!pattern.firstLetter.exec(this.agentInfo[item]) && (item=='username'||item=='password')) {
           return this.$toast({
             position: 'top',
             message: `请输入符合规则的${this.formValidationName[item]}`,
             className: '-item-message'
           });
         } else if (item=='points' && !pattern.positiveInteger.exec(this.agentInfo[item])) {
+          return this.$toast({
+            position: 'top',
+            message: `请输入符合规则的${this.formValidationName[item]}`,
+            className: '-item-message'
+          });
+        } else if (item == 'displayName' && !pattern.nickName.exec(this.agentInfo[item])) {
           return this.$toast({
             position: 'top',
             message: `请输入符合规则的${this.formValidationName[item]}`,
