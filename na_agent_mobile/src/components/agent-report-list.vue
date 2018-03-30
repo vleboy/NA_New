@@ -265,6 +265,7 @@ export default {
             item.totalAmount = (+item.commission + item.winloseAmount).toFixed(2) // 代理总金额
             item.profitRatio = (key == '30000') ? (+item.totalAmount/item.mixAmount).toFixed(2)*100 : (+item.totalAmount/item.betAmount).toFixed(2)*100  // 获利比例(真人和其他游戏类型算法不一样)
             item.submitAmount = (+item.totalAmount * (1 - item.rate * 0.01)).toFixed(2)  // 代理交公司 代理总金额*（1-代理占成）=代理交公司
+            item.mixAmount = (key == '30000') ? item.mixAmount : item.betAmount // 洗码量 （非真人为输赢金额）
           }
         }
         this.gameLists.push(item)
