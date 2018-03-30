@@ -159,7 +159,6 @@ export default {
       if (this.$store.state.storageAgentOne.length) {
         rate = this.$store.state.storageAgentOne.rate
       } else {
-        console.log(2)
         rate = localStorage.loginRate
       }
       return rate

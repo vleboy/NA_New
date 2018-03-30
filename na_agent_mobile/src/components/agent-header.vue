@@ -62,7 +62,7 @@ export default {
           })
           this.$store.commit({
             type: 'agentInfo_storageAgentItem',
-            data: []
+            data: ''
           })
           this.$router.push('/login')
           localStorage.clear()
