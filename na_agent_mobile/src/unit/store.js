@@ -11,8 +11,8 @@ const state = {
   balance: '',// 顶层剩余点数
   dateTime: '', // 存取搜索的时间
   storageAgentList: [], // 存取点击过的代理列表
-  storageAgentOne: [], // 获取当前的代理信息
-  storagePlayerOne: [] // 获取单个玩家信息,
+  storageAgentOne: '', // 获取当前的代理信息
+  storagePlayerOne: '' // 获取单个玩家信息,
 }
 
 const getters = {}

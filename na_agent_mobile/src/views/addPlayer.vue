@@ -109,7 +109,7 @@ export default {
     parentGameList () {
       let param = ''
 
-      if (!this.$store.state.storageAgentOne.length) {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
         param = this.gameList.length ?  this.gameList : this.gameReportForm
       } else {
         param = this.gameList
@@ -123,7 +123,7 @@ export default {
     },
     parentPlayerId () {
       let parent = ''
-      if (!this.$store.state.storageAgentOne.length) {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
         parent = localStorage.loginSuffix == 'Agent' ? '' : this.userId
       } else {
         parent = this.userId
