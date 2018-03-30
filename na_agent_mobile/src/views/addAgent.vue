@@ -80,7 +80,7 @@ export default {
   data () {
     return {
       isChecked: false,
-      agentSn: this.$route.query.agentSn,
+      agentSn: this.$route.query.agentSn || '暂无',
       agentName: this.$route.query.agentName,
       agentInfo: {
         username: '', // 用户名
