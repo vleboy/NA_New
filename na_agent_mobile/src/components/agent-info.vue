@@ -30,7 +30,7 @@ export default {
     operates () {
       let navList = []
 
-      if(this.$store.state.storageAgentOne != '' && this.$store.state.storageAgentOne.userId != localStorage.loginId) {
+      if(this.$store.state.storageAgentOne.length && this.$store.state.storageAgentOne.userId != localStorage.loginId) {
         navList = [
           {
             name: '创建代理',
@@ -101,7 +101,7 @@ export default {
     },
     addAgentSn () {
       let param = ''
-      if (this.$store.state.storageAgentOne == '') {
+      if (!this.$store.state.storageAgentOne.length) {
         param = localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn
       } else {
         param =  this.$store.state.storageAgentOne.sn
@@ -110,7 +110,7 @@ export default {
     },
     addAgentName () {
       let param = ''
-      if (this.$store.state.storageAgentOne == '') {
+      if (!this.$store.state.storageAgentOne.length) {
         param = localStorage.loginSuffix == 'Agent' ? '直属' : localStorage.loginDisplayName
       } else {
         param =  this.$store.state.storageAgentOne.displayName

@@ -194,7 +194,7 @@ export default {
     },
     parentPlayerId () {
       let param = ''
-      if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
+      if (!this.$store.state.storageAgentOne.length) {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
         param = localStorage.loginSuffix == 'Agent' ? '01' : this.userId
       } else {
         param = this.userId
