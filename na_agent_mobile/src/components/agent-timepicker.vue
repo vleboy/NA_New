@@ -78,10 +78,10 @@ export default {
   },
   computed: {
     'startDateValues' () {
-      return filters.formatTime(new Date(this.startDate).getTime(), 'yyyy-MM-dd hh:mm:ss')
+      return filters.formatTime(new Date(this.startDate).getTime(), 'yyyy-MM-dd hh:mm')
     },
     'endDateValues' () {
-      return filters.formatTime(new Date(this.endDate).getTime(), 'yyyy-MM-dd hh:mm:ss')
+      return filters.formatTime(new Date(this.endDate).getTime(), 'yyyy-MM-dd hh:mm')
     }
   },
   methods: {
