@@ -101,6 +101,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { pattern } from '@/unit/regexp'
   import agentOperation from './agent-operation'
 import api from '@/api/api'
 export default {
@@ -341,6 +342,11 @@ export default {
           }).then(res => {
             this.getPlayerList()
             this.itemPlayerInfo.state = this.itemPlayerInfo.state ? 0 : 1 // 这里需要手动控制玩家冻结和解冻的状态，不影响获取列表信息
+            this.$toast({
+              position: 'top',
+              message: `操作成功`,
+              className: '-item-message'
+            })
             this.$indicator.close()
           }).catch(error => {
             this.$indicator.close()
@@ -350,12 +356,23 @@ export default {
       });
     }, // 商户冻结解冻
     changePassword () {
-      this.$message.prompt('请输入新密码')
+      this.$message.prompt('请输入新密码',{
+          inputPlaceholder: '以字母开头8~16位数字或字母组合',
+          inputValidator: (val) => {
+            if (!pattern.firstLetter.exec(val)) {
+              return false
+            } else {
+              return true
+            }
+          },
+          inputErrorMessage: '以字母开头8~16位数字或字母组合'
+        })
         .then((res) => {
           this.$indicator.open({
             text: '加载中...',
             spinnerType: 'fading-circle'
           })
+
           this.$http({
             method: 'post',
             url: api.password,
@@ -365,6 +382,11 @@ export default {
             }
           }).then(res => {
             this.getPlayerList()
+            this.$toast({
+              position: 'top',
+              message: `修改成功`,
+              className: '-item-message'
+            })
             this.$indicator.close()
           }).catch(error => {
             this.$indicator.close()

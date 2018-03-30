@@ -4,7 +4,7 @@
       <img class="-top-img" src="/static/NAlogo.png">
     </div>
     <div class="-l-down">
-      <form class="-l-form">
+      <form class="-l-form" autocomplete="off">
         <div class="form-item">
           <label class="-label-text">账号</label>
           <input class="-input" type="text" placeholder="请输入账号" v-model="userName">
@@ -124,6 +124,7 @@ export default {
           margin-left: 10px;
           width: 60%;
         }
+        /*.-input:-webkit-autofill { box-shadow: 0 0 0 1000px transparent inset !important;}*/
         .-input::-webkit-input-placeholder{
           color:#fff;
         }

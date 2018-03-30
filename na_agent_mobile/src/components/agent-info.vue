@@ -68,28 +68,43 @@ export default {
           }
         ]
       } else {
-        navList = [
-          {
-            name: '创建代理',
-            img: require('assets/img/add-agent.png'),
-            url: '/addAgent',
-            param: {
-              agentSn: this.addAgentSn,
-              agentName: this.addAgentName
+        if (localStorage.loginSuffix == 'Agent') {
+          navList = [
+            {
+              name: '创建代理',
+              img: require('assets/img/add-agent.png'),
+              url: '/addAgent',
+              param: {
+                agentSn: this.addAgentSn,
+                agentName: this.addAgentName
+              },
+              isUrl: true
+            }
+          ]
+        } else  {
+          navList = [
+            {
+              name: '创建代理',
+              img: require('assets/img/add-agent.png'),
+              url: '/addAgent',
+              param: {
+                agentSn: this.addAgentSn,
+                agentName: this.addAgentName
+              },
+              isUrl: true
             },
-            isUrl: true
-          },
-          {
-            name: '创建玩家',
-            img: require('assets/img/add-player.png'),
-            url: '/addPlayer',
-            param: {
-              agentSn: this.addAgentSn,
-              agentName: this.addAgentName
-            },
-            isUrl: true
-          }
-        ]
+            {
+              name: '创建玩家',
+              img: require('assets/img/add-player.png'),
+              url: '/addPlayer',
+              param: {
+                agentSn: this.addAgentSn,
+                agentName: this.addAgentName
+              },
+              isUrl: true
+            }
+          ]
+        }
       }
       return navList
     },
