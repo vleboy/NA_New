@@ -21,19 +21,19 @@
       <div class="-c-item">
         <label class="-item-text">用户名:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于6位字符" v-model="agentInfo.username">
+          <input type="text" placeholder="以字母开头不小于8位字符" v-model="agentInfo.username">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">密码:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于6位字符" v-model="agentInfo.password">
+          <input type="text" placeholder="以字母开头不小于8位字符" v-model="agentInfo.password">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">昵称:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头不小于6位字符" v-model="agentInfo.displayName">
+          <input type="text" placeholder="以字母开头不小于8位字符" v-model="agentInfo.displayName">
         </div>
       </div>
       <div class="-c-item">
