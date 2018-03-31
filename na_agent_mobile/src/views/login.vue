@@ -124,23 +124,14 @@ export default {
           margin-left: 10px;
           width: 60%;
         }
+        .-input {
+          background-color: transparent !important;
+        }
         .-input:-webkit-autofill {
-          box-shadow: 0 0 0 1000px transparent inset !important;
+          -webkit-transition: background-color 10000s cubic-bezier(1, -100, 1, -100) 0s;
           -webkit-text-fill-color:#fff;
         }
 
-        .-input:-webkit-autofill {
-          -webkit-animation: autofill-fix 1s infinite;
-        }
-
-        @-webkit-keyframes autofill-fix {
-          from {
-            background-color: transparent
-          }
-          to {
-            background-color: transparent
-          }
-        }
 
         .-input::-webkit-input-placeholder{
           color:#fff;
