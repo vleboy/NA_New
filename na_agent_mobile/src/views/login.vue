@@ -117,14 +117,31 @@ export default {
 
         .-input{
           line-height: 80px;
-          color: #fff;
+          color: #fff!important;
           background-color: transparent;
           border: none;
           outline: none;
           margin-left: 10px;
           width: 60%;
         }
-        /*.-input:-webkit-autofill { box-shadow: 0 0 0 1000px transparent inset !important;}*/
+        .-input:-webkit-autofill {
+          box-shadow: 0 0 0 1000px transparent inset !important;
+          -webkit-text-fill-color:#fff;
+        }
+
+        .-input:-webkit-autofill {
+          -webkit-animation: autofill-fix 1s infinite;
+        }
+
+        @-webkit-keyframes autofill-fix {
+          from {
+            background-color: transparent
+          }
+          to {
+            background-color: transparent
+          }
+        }
+
         .-input::-webkit-input-placeholder{
           color:#fff;
         }
