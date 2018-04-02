@@ -94,8 +94,8 @@ export default {
       switch (time.id) {
         case 1:
           // 获取一小时数据
-          startDateTime = nowTime.getTime()
-          endDateTime = nowTime.getTime() + 60*60*1000
+          startDateTime = nowTime.getTime() - 60*60*1000
+          endDateTime = nowTime.getTime()
               break
         case 2:
           // 获取一天数据
@@ -148,8 +148,8 @@ export default {
       this.$store.commit({
         type: 'agentInfo_dateTime',
         data: {
-          startDateTime: new Date(this.startDateValues).getTime(),
-          endDateTime: new Date(this.endDateValues).getTime()
+          startDateTime: new Date(this.startDate).getTime(),
+          endDateTime: new Date(this.endDate).getTime()
         }
       })
       this.$emit('searchTime')

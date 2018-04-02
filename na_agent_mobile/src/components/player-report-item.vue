@@ -211,21 +211,25 @@ export default {
   },
   methods: {
     showPlayerReport (item,index) {
-      this.itemPlayerInfo = item
+      this.itemPlayerInfo = JSON.parse(JSON.stringify(item))
       this.reportItemList[index].isPlayerActive = !this.reportItemList[index].isPlayerActive
       this.reportItemList = Object.assign([],this.reportItemList)
       this.$store.commit({
         type: 'agentInfo_storagePlayerItem',
         data: item
       })
+      this.initData()
     },
     showGameListInfo (data,index) {
+      console.log(data, 'data')
       for (let [indexList,item] of this.reportItemList.entries()) {
         if(item.userName == data.userName) {
+          this.itemPlayerInfo.gameList = item.gameList
           this.reportItemList[indexList].gameLists[index].isGameActive = !this.reportItemList[indexList].gameLists[index].isGameActive
           this.reportItemList= Object.assign([],this.reportItemList)
         }
       }
+//      this.initData()
     },
     getPlayerList () {
       let playerList = []
@@ -289,16 +293,17 @@ export default {
       }).then(res => {
         this.playerGameList = res.data.payload
         this.$indicator.close()
-        this.initData()
+
       }).catch(error => {
         this.$indicator.close()
       })
     }, // 获取玩家列表
     initData () {
-      let loginGameList = this.gameList.length ? this.gameList : this.gameReportForm
+      let loginGameList = this.itemPlayerInfo.gameList.length ? this.itemPlayerInfo.gameList : this.gameReportForm
       // 先组装有有玩家消费记录的报表
        for (let item  of this.playerGameList) {
          for (let data of this.reportItemList) {
+           data.gameLists = []
            if(item.userName == data.userName) {
              data.gameInfo = item
            }
