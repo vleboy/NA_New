@@ -72,8 +72,8 @@ export default {
       ],
       show: '',
       showTimeDefine: false,
-      startDate: '',
-      endDate: ''
+      startDate: new Date(),
+      endDate: new Date()
     }
   },
   computed: {

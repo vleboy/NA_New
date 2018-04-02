@@ -8,13 +8,13 @@
       <div class="-c-item">
         <label class="-item-text">用户名:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头8~16位数字或字母组合" v-model="playerInfo.userName">
+          <input type="text" placeholder="以字母开头6~16位数字或字母组合" v-model="playerInfo.userName">
         </div>
       </div>
       <div class="-c-item">
         <label class="-item-text">密码:</label>
         <div class="-item-color">
-          <input type="text" placeholder="以字母开头8~16位数字或字母组合" v-model="playerInfo.userPwd">
+          <input type="text" placeholder="以字母开头6~16位数字或字母组合" v-model="playerInfo.userPwd">
         </div>
       </div>
       <div class="-c-item">
@@ -230,7 +230,7 @@ export default {
             message: `请输入${this.formValidationName[item]}`,
             className: '-item-message'
           });
-        } else if (!pattern.firstLetter.exec(this.playerInfo[item]) && (item=='userName'||item=='userPwd')) {
+        } else if (!pattern.playerFirstLetter.exec(this.playerInfo[item]) && (item=='userName'||item=='userPwd')) {
           return this.$toast({
             position: 'top',
             message: `请输入符合规则的${this.formValidationName[item]}`,
