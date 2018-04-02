@@ -221,14 +221,21 @@ export default {
       this.initData()
     },
     showGameListInfo (data,index) {
-      console.log(data, 'data')
+
       for (let [indexList,item] of this.reportItemList.entries()) {
         if(item.userName == data.userName) {
-          this.itemPlayerInfo.gameList = item.gameList
           this.reportItemList[indexList].gameLists[index].isGameActive = !this.reportItemList[indexList].gameLists[index].isGameActive
           this.reportItemList= Object.assign([],this.reportItemList)
+
+          // 处理点击玩家输赢列表   二次渲染问题
+          for (let list of this.reportItemList[indexList].gameList) {
+            if(list.code == data.code) {
+              data.mix = list.mix
+            }
+          }
         }
       }
+      console.log(this.itemPlayerInfo)
 //      this.initData()
     },
     getPlayerList () {
