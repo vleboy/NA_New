@@ -113,7 +113,6 @@ export default {
       if (this.isComeFromTop ) {
         param = this.isSave ? this.agentInfo.parentDisplayName : this.agentInfo.displayName
       } else {
-        console.log(this.agentInfo)
         param = this.isSave ? this.agentInfo.username || localStorage.loginUsername : this.playerInfo.userName
       }
       return param
