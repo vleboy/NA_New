@@ -72,7 +72,7 @@ export default {
       ],
       show: '',
       showTimeDefine: false,
-      startDate: new Date(),
+      startDate: new Date(new Date(new Date().getTime() - 24*60*60*1000).setHours(11,59,59,0)),
       endDate: new Date()
     }
   },
