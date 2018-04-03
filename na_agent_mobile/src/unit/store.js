@@ -56,6 +56,7 @@ const mutations = {
             userId: localStorage.loginId,
             sn: localStorage.loginSn,
             displayName: localStorage.loginDisplayName,
+            username: localStorage.loginUsername,
             gameList: JSON.parse(localStorage.loginGameList),
             rate: localStorage.loginRate,
             isTop: true,

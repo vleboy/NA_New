@@ -113,7 +113,8 @@ export default {
       if (this.isComeFromTop ) {
         param = this.isSave ? this.agentInfo.parentDisplayName : this.agentInfo.displayName
       } else {
-        param = this.isSave ? this.agentInfo.username : this.playerInfo.userName
+        console.log(this.agentInfo)
+        param = this.isSave ? this.agentInfo.username || localStorage.loginUsername : this.playerInfo.userName
       }
       return param
     }, // 发起方名称
@@ -122,7 +123,7 @@ export default {
       if (this.isComeFromTop ) {
         param = this.isSave ? this.agentInfo.displayName : this.agentInfo.parentDisplayName
       } else {
-        param = this.isSave ? this.playerInfo.userName : this.agentInfo.username
+        param = this.isSave ? this.playerInfo.userName : this.agentInfo.username || localStorage.loginUsername
       }
       return param
     }, // 接收方名称
