@@ -330,6 +330,7 @@ export default {
                 item.betAmount = Math.abs(item.betAmount) // 格式化投注金额
                 item.commission = (key == '30000') ? (item.mixAmount*item.mix*0.01).toFixed(2) : (item.betAmount*item.mix*0.01).toFixed(2)  // 佣金 (真人和其他游戏类型算法不一样)
                 item.totalAmount = (+item.commission + item.winloseAmount).toFixed(2) // 代理总金额
+                item.mixAmount = (key == '30000') ? item.mixAmount : item.betAmount // 洗码量 （非真人为输赢金额）
               }
             }
             list.gameLists.push(item)
