@@ -8,10 +8,10 @@
           <label>剩余点数</label>
           <span>{{balance || 0}}</span>
         </li>
-        <li>
-          <label>总洗码量</label>
-          <span>{{agentInfo.mixAmount || 0}}</span>
-        </li>
+        <!--<li>-->
+          <!--<label>总洗码量</label>-->
+          <!--<span>{{agentInfo.mixAmount || 0}}</span>-->
+        <!--</li>-->
       </ul>
     </div>
   </div>
