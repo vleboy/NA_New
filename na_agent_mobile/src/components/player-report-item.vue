@@ -32,7 +32,7 @@
               <div class="game_list_items">
                 <label>总投注：</label>
                 <span>
-                  {{ item.gameInfo.betAmount || 0}}
+                  {{ item.betAmount || 0}}
                 </span>
               </div>
             </li>
@@ -40,7 +40,7 @@
               <div class="game_list_items">
                 <label>总输赢：</label>
                 <span>
-                  {{ item.gameInfo.winloseAmount || 0}}
+                  {{ item.winloseAmount || 0}}
                 </span>
               </div>
             </li>
@@ -111,7 +111,6 @@ export default {
     return{
       reportItemList: [],
       itemPlayerInfo: {}, // 单个玩家详细
-      playerGameList: [], // 有游戏记录玩家数据
       gameReportForm: [
         {
           code: '10000',
@@ -240,43 +239,14 @@ export default {
     },
     getPlayerList () {
       let playerList = []
-      this.$indicator.open({
-        text: '加载中...',
-        spinnerType: 'fading-circle'
-      })
-      this.$http({
-        method: 'post',
-        url: api. reportPlayer,
-        data: {
-          parentId: this.parentPlayerId
-        }
-      }).then(res => {
-        this.reportItemList = res.data.payload
-
-        for (let item of this.reportItemList) {
-          playerList.push(item.userName)
-          item.gameLists = []
-          item.gameInfo = ''
-          item.isPlayerActive = false
-        }
-
-        this.$indicator.close()
-        this.getPlayerListDetail(playerList)
-      }).catch(error => {
-        this.$indicator.close()
-      })
-    }, // 获取玩家列表
-    getPlayerListDetail (list) {
       let gameTypeList = []
-
       let test = {
+        parentId: this.parentPlayerId,
         gameType: gameTypeList,
-        gameUserNames: list,
         query: {
           createdAt: this.dateTime
         }
       }
-
       // 获取该报表有的游戏
       if (this.gameList.length) {
         for (let item of this.gameList) {
@@ -292,34 +262,30 @@ export default {
         text: '加载中...',
         spinnerType: 'fading-circle'
       })
-
       this.$http({
         method: 'post',
-        url: api.calcPlayerStat,
+        url: api. reportPlayer,
         data: test
       }).then(res => {
-        this.playerGameList = res.data.payload
-        this.$indicator.close()
+        this.reportItemList = res.data.payload
 
+        for (let item of this.reportItemList) {
+          playerList.push(item.userName)
+          item.gameLists = []
+          item.isPlayerActive = false
+        }
+
+        this.$indicator.close()
       }).catch(error => {
         this.$indicator.close()
       })
     }, // 获取玩家列表
     initData () {
       let loginGameList = this.itemPlayerInfo.gameList.length ? this.itemPlayerInfo.gameList : this.gameReportForm
-      // 先组装有有玩家消费记录的报表
-       for (let item  of this.playerGameList) {
-         for (let data of this.reportItemList) {
-           data.gameLists = []
-           if(item.userName == data.userName) {
-             data.gameInfo = item
-           }
-         }
-       }
 
       for (let list of this.reportItemList) {
-        if(list.gameInfo != '') {
-          for (let [key,item] of Object.entries(list.gameInfo.gameTypeMap)) {
+        if(!list.gameLists.length) {
+          for (let [key,item] of Object.entries(list.gameTypeMap)) {
             for (let data of loginGameList) {
               if(key == data.code) {
                 item.isGameActive = false

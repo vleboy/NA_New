@@ -28,6 +28,28 @@ export default {
 
   data() {
     return{
+      gameReportForm: [
+        {
+          code: '10000',
+          name: 'NA棋牌游戏',
+          mix: '1'
+        },
+        {
+          code: '30000',
+          name: 'NA真人游戏',
+          mix: '1'
+        },
+        {
+          code: '40000',
+          name: 'NA电子游戏',
+          mix: '1'
+        },
+        {
+          code: '50000',
+          name: 'NA街机游戏',
+          mix: '1'
+        }
+      ],
       reportItemList: [],
       itemPlayerInfo: ''
     }
@@ -51,6 +73,24 @@ export default {
         param = this.userId
       }
       return param
+    },
+    dateTime () {
+      let time,startDateTime,endDateTime = ''
+
+      if (this.$store.state.dateTime == '') {
+        startDateTime = this.getWeek().setHours(0, 0, 0, 0)
+        endDateTime = this.getWeek().setHours(0, 0, 0, 0) + 7*24*3600*1000 - 1
+      } else {
+        startDateTime = this.$store.state.dateTime.startDateTime
+        endDateTime = this.$store.state.dateTime.endDateTime
+      }
+
+      time = [startDateTime, endDateTime]
+
+      return time
+    },
+    gameList () {
+      return this.$store.state.storageAgentOne.gameList || JSON.parse(localStorage.loginGameList)
     }
   },
   mounted () {
@@ -58,6 +98,28 @@ export default {
   },
   methods: {
     getAgentList () {
+      let gameTypeList = []
+      this.gameLists = []
+      let test = {
+        gameType: gameTypeList,
+        role: localStorage.loginSuffix == 'Agent' ? '-1000' : '1000',
+        parent: this.parentId,
+        query: {
+          createdAt: this.dateTime
+        }
+      }
+
+      // 获取该报表有的游戏
+      if (this.gameList.length) {
+        for (let item of this.gameList) {
+          gameTypeList.push(item.code)
+        }
+      } else {
+        for (let item of this.gameReportForm) {
+          gameTypeList.push(item.code)
+        }
+      }
+
       this.$indicator.open({
         text: '加载中...',
         spinnerType: 'fading-circle'
@@ -65,12 +127,14 @@ export default {
       this.$http({
         method: 'post',
         url: api.reportInfo,
-        data: {
-          parent: this.parentId
-        }
+        data: test
       }).then(res => {
         this.$indicator.close()
         this.reportItemList = res.data.payload
+        this.$store.commit({
+          type: 'agent_report_list',
+          data: this.reportItemList
+        }) // 获取的总报表的相关数据
       }).catch(error => {
         this.$indicator.close()
       })
@@ -87,7 +151,12 @@ export default {
         data: item
       }) // 存储单个代理信息
       this.$emit('getNewAgent',item)
-    }
+    },
+    getWeek() {
+      let nowDate= new Date()  ;
+      let nowDay = nowDate.getDay() || 7;
+      return new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() + 1 - nowDay);
+    } // 处理周次
   }
 }
 </script>

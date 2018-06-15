@@ -106,7 +106,7 @@ export default {
       return this.$route.query.state == 1
     },// 1为存点  2位提点
     isComeFromTop () {
-      return this.$route.query.toFrom == 1
+        return this.$route.query.toFrom == 1
     }, // 1为代理存提点 2为玩家存提点
     initiatorName () {
       let param

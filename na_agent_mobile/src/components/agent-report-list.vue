@@ -2,9 +2,9 @@
   <div class="total_report_list">
     <div class="total_loss_win" @click="showTotalReport()">
       <label>总输赢</label>
-      <span :class="{'total-report-green':gameDetail.winloseAmount > 0,'total-report-red':gameDetail.winloseAmount < 0}"
+      <span :class="{'total-report-green':winLoseAmount > 0,'total-report-red':winLoseAmount < 0}"
             v-if="gameLists.length">
-        {{gameDetail.winloseAmount || 0}}
+        {{winLoseAmount || 0}}
         <i :class="{ showTotalReportActive: !showTotalReportView }">
           <img src="../assets/img/sub-lag.png" alt="">
         </i>
@@ -126,8 +126,14 @@ export default {
       ],
       gameDetail: {
         balance: '',
-        mixAmount: ''
-      }
+        mixAmount: '',
+        gameTypeMap:{}
+      },
+      cardList: [], // 棋牌游戏
+      liveList: [], // 真人游戏
+      videoList: [], // 电子游戏
+      ArcadeList: [], // 街机游戏
+      winLoseAmount: 0, // 总输赢
     }
   },
   computed: {
@@ -162,6 +168,9 @@ export default {
         rate = localStorage.loginRate
       }
       return rate
+    },
+    gameDetailInfo () {
+      return this.$store.state.storageAgentListInfo
     }
   },
   mounted () {
@@ -176,7 +185,6 @@ export default {
       this.gameLists = Object.assign([],this.gameLists)
     },
     getHomeData () {
-      this.getAllReport()
       this.getBills()
     },
     getBills () {
@@ -198,83 +206,135 @@ export default {
 
       })
     }, // 获取剩余点数
-    getAllReport () {
-      let gameTypeList = []
-      this.gameLists = []
-      let test = {
-        gameType: gameTypeList,
-        role: localStorage.loginSuffix == 'Agent' ? '-1000' : '1000',
-        userIds: [this.userId],
-        query: {
-          createdAt: this.dateTime
-        }
-      }
-
-      // 获取该报表有的游戏
-      if (this.gameList.length) {
-        for (let item of this.gameList) {
-          gameTypeList.push(item.code)
-        }
-      } else {
-        for (let item of this.gameReportForm) {
-          gameTypeList.push(item.code)
-        }
-      }
-
-      this.$indicator.open({
-        text: '加载中...',
-        spinnerType: 'fading-circle'
-      })
-
-      this.$http({
-        method: 'post',
-        url: api.calcUserStat,
-        data: test
-        }).then(res => {
-
-        this.$indicator.close()
-
-        if (res.data.payload.length) {
-          this.gameDetail = res.data.payload[0]
-          this.initData()
-        }
-
+    getAllReport (data) {
+      if(data.length) {
+        this.gameDetail = data
+        this.initData()
         this.$store.commit({
           type: 'agentInfo_title',
           data: this.gameDetail
         }) // 存储显示剩余洗码量
+      }
 
-      }).catch(error => {
-        this.$indicator.close()
-      })
     },// 获取总报表相关信息
     initData () {
+      let dataReport = []
       let loginGameList = this.gameList.length ? this.gameList : this.gameReportForm
-
-      for (let [key,item] of Object.entries(this.gameDetail.gameTypeMap)) {
-        for (let data of loginGameList) {
-          if(key == data.code) {
-            item.isActive = false
-            item.code = key // 游戏code
-            item.name = data.name // 名称
-            item.mix = data.mix // 返水比例
-            item.rate = this.agentRate // 代理占成
-            item.betAmount = Math.abs(item.betAmount) // 格式化投注金额
-            item.commission = (key == '30000') ? (item.mixAmount*item.mix*0.01).toFixed(2) : (item.betAmount*item.mix*0.01).toFixed(2)  // 佣金 (真人和其他游戏类型算法不一样)
-            item.totalAmount = (+item.commission + item.winloseAmount).toFixed(2) // 代理总金额
-            item.profitRatio = (key == '30000') ? ((+item.totalAmount/item.mixAmount)*100).toFixed(2) : ((+item.totalAmount/item.betAmount)*100).toFixed(2)  // 获利比例(真人和其他游戏类型算法不一样)
-            item.submitAmount = (+item.totalAmount * (1 - item.rate * 0.01)).toFixed(2)  // 代理交公司 代理总金额*（1-代理占成）=代理交公司
-            item.mixAmount = (key == '30000') ? item.mixAmount : item.betAmount // 洗码量 （非真人为输赢金额）
+      this.gameLists = []
+      this.cardList = []
+      this.liveList = []
+      this.videoList = []
+      this.ArcadeList = []
+      this.winLoseAmount = 0
+      for(let list of this.gameDetail) {
+        for (let [key,item] of Object.entries(list.gameTypeMap)) {
+          for (let data of loginGameList) {
+            if(key == data.code) {
+              item.isActive = false
+              item.code = key // 游戏code
+              item.name = data.name // 名称
+              item.mix = data.mix // 返水比例
+              item.rate = this.agentRate // 代理占成
+              item.betAmount = Math.abs(item.betAmount) // 格式化投注金额
+              item.commission = (key == '30000') ? (item.mixAmount*item.mix*0.01).toFixed(2) : (item.betAmount*item.mix*0.01).toFixed(2)  // 佣金 (真人和其他游戏类型算法不一样)
+              item.totalAmount = (+item.commission + item.winloseAmount).toFixed(2) // 代理总金额
+              item.profitRatio = (key == '30000') ? ((+item.totalAmount/item.mixAmount)*100).toFixed(2) : ((+item.totalAmount/item.betAmount)*100).toFixed(2)  // 获利比例(真人和其他游戏类型算法不一样)
+              item.submitAmount = (+item.totalAmount * (1 - item.rate * 0.01)).toFixed(2)  // 代理交公司 代理总金额*（1-代理占成）=代理交公司
+              item.mixAmount = (key == '30000') ? item.mixAmount : item.betAmount // 洗码量 （非真人为输赢金额）
+            }
           }
+          dataReport.push(item)
         }
-        this.gameLists.push(item)
       }
+
+      for (let item of dataReport) {
+        switch (item.code){
+          case '10000':
+            this.cardList.push(item)
+                break
+          case '30000':
+            this.liveList.push(item)
+                break
+          case '40000':
+            this.videoList.push(item)
+                break
+          case '50000':
+            this.ArcadeList.push(item)
+                break
+        }
+      }
+
+      let [betCount,mix,rate,betAmount,commission,totalAmount,profitRatio,submitAmount,mixAmount,winloseAmount] = [0,0,0,0,0,0,0,0,0,0]
+
+      let obj = {}
+
+      if (this.liveList.length) {
+        for(let item of this.liveList) {
+          initItem(item)
+        }
+        this.gameLists.push(obj)
+      }
+      if (this.cardList.length) {
+        clearZero()
+        for(let item of this.cardList) {
+          initItem(item)
+        }
+        this.gameLists.push(obj)
+      }
+      if (this.videoList.length) {
+        clearZero()
+        for(let item of this.videoList) {
+          initItem(item)
+        }
+        this.gameLists.push(obj)
+      }
+      if (this.ArcadeList.length) {
+        clearZero()
+        for(let item of this.ArcadeList) {
+          initItem(item)
+        }
+        this.gameLists.push(obj)
+      }
+
+      for (let data of this.gameLists) {
+        this.winLoseAmount += (+data.winloseAmount)
+      }
+
+      function clearZero() {
+        betCount = 0 ,mix  = 0 ,rate = 0 ,betAmount = 0, commission = 0, totalAmount = 0, profitRatio = 0,
+          submitAmount = 0,mixAmount = 0 ,winloseAmount = 0
+      }
+
+      function initItem(item) {
+        obj = {
+          isActive: item.isActive,
+          code: item.code, // 游戏code
+          name: item.name, // 名称
+          betCount: (betCount += (+item.betCount)).toFixed(2),
+          mix: (mix += (+item.mix)).toFixed(2),
+          rate: (rate += (+item.rate)).toFixed(2),
+          betAmount: (betAmount += (+item.betAmount)).toFixed(2),
+          commission: (commission += (+item.commission)).toFixed(2),
+          totalAmount: (totalAmount += (+item.totalAmount)).toFixed(2),
+          profitRatio: (profitRatio += (+item.profitRatio)).toFixed(2),
+          submitAmount: (submitAmount += (+item.submitAmount)).toFixed(2),
+          mixAmount: (mixAmount += (+item.mixAmount)).toFixed(2),
+          winloseAmount: (winloseAmount += (+item.winloseAmount)).toFixed(2)
+        }
+        return obj
+      }
+
     },// 数据组装，处理数据
     getWeek() {
       let nowDate= new Date()  ;
       let nowDay = nowDate.getDay() || 7;
       return new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() + 1 - nowDay);
     } // 处理周次
+  },
+  watch: {
+    'gameDetailInfo': function (_new) {
+      this.getAllReport(_new)
+    }
   }
 }
 </script>

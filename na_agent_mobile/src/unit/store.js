@@ -12,7 +12,8 @@ const state = {
   dateTime: '', // 存取搜索的时间
   storageAgentList: [], // 存取点击过的代理列表
   storageAgentOne: '', // 获取当前的代理信息
-  storagePlayerOne: '' // 获取单个玩家信息,
+  storagePlayerOne: '', // 获取单个玩家信息,
+  storageAgentListInfo: '' // 获取代理相关信息,
 }
 
 const getters = {}
@@ -75,6 +76,9 @@ const mutations = {
   }, // 存储单个代理信息,
   agentInfo_storagePlayerItem (state, payload) {
     state.storagePlayerOne = payload.data
+  }, // 存储单个玩家信息
+  agent_report_list (state, payload) {
+    state.storageAgentListInfo = payload.data
   } // 存储单个玩家信息
 }
 

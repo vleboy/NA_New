@@ -23,6 +23,7 @@
 
 <script type="text/ecmascript-6">
   import api from '@/api/api'
+  import bcrypt from "bcryptjs";
 export default {
   name: 'login',
   data () {
@@ -33,6 +34,8 @@ export default {
   },
   methods: {
     login () {
+      let password = bcrypt.hashSync(this.password, 10);
+
       if(!this.userName || !this.password) {
         return  this.$toast({
           position: 'top',
@@ -44,13 +47,14 @@ export default {
         text: '登录中...',
         spinnerType: 'fading-circle'
       })
+
         this.$http({
           method: 'post',
           url: api.agentLogin,
           data: {
             mobileFlag: true,
             username: this.userName,
-            password: this.password,
+            password: password,
             role: '1000'
           }
         }).then(res => {
