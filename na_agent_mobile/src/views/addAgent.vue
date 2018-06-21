@@ -136,9 +136,12 @@ export default {
       if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
         param = this.gameList.length ?  this.gameList : this.gameReportForm
       } else {
-        param = this.gameList
+        if (this.$store.state.storageAgentOne.suffix == 'Agent') {
+          param =  this.gameReportForm
+        } else {
+          param = this.gameList
+        }
       }
-
       return param
     },
     userId () {
@@ -150,7 +153,11 @@ export default {
       if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
         parent = localStorage.loginSuffix == 'Agent' ? '' : this.userId
       } else {
-        parent = this.userId
+        if (this.$store.state.storageAgentOne.suffix == 'Agent') {
+          parent = ''
+        } else {
+          parent = this.userId
+        }
       }
       return parent
     },
@@ -159,7 +166,11 @@ export default {
       if (this.$store.state.storageAgentOne == '') {// 首先判断是否是第一次登录 是第一次登录 判断是否是顶级管理员
         agent = localStorage.loginSuffix == 'Agent' ? '01' : this.userId
       } else {
-        agent = this.userId
+        if (this.$store.state.storageAgentOne.suffix == 'Agent') {
+          agent = '01'
+        } else {
+          agent = this.userId
+        }
       }
       return agent
     } // 处理创建代理如果是直属那么传递的值为01

@@ -55,6 +55,7 @@ const mutations = {
         } else {
           state.storageAgentList.push({
             userId: localStorage.loginId,
+            suffix: localStorage.loginSuffix,
             sn: localStorage.loginSn,
             displayName: localStorage.loginDisplayName,
             username: localStorage.loginUsername,

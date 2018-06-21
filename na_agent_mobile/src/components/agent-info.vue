@@ -119,7 +119,11 @@ export default {
       if (this.$store.state.storageAgentOne == '') {
         param = localStorage.loginSuffix == 'Agent' ?  'NA369': localStorage.loginSn
       } else {
-        param =  this.$store.state.storageAgentOne.sn
+        if (this.$store.state.storageAgentOne.suffix == 'Agent') {
+          param =  'NA369'
+        } else {
+          param =  this.$store.state.storageAgentOne.sn
+        }
       }
       return param
     },
